@@ -117,4 +117,32 @@ describe("useTheme", () => {
 
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark")
   })
+
+  it("throws when used outside ThemeProvider", () => {
+    function BareConsumer() {
+      useTheme()
+      return null
+    }
+
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {})
+    expect(() => render(<BareConsumer />)).toThrow(
+      "useTheme must be used within a ThemeProvider",
+    )
+    spy.mockRestore()
+  })
+
+  it("survives localStorage write failure", async () => {
+    const failingStorage = {
+      ...mockLocalStorage,
+      setItem: () => { throw new DOMException("QuotaExceededError") },
+    }
+    vi.stubGlobal("localStorage", failingStorage)
+
+    const user = userEvent.setup()
+    renderWithProvider()
+
+    await user.click(screen.getByRole("button", { name: "Dark" }))
+
+    expect(screen.getByTestId("theme")).toHaveTextContent("dark")
+  })
 })
