@@ -1,7 +1,13 @@
+import { ThemeProvider } from "@/hooks/use-theme"
+import { ThemeToggle } from "@/components/theme-toggle"
+
 export function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <h1 className="text-2xl font-bold">DevTidy</h1>
-    </div>
+    <ThemeProvider>
+      <div className="flex min-h-screen items-center justify-center gap-4">
+        <h1 className="text-2xl font-bold">DevTidy</h1>
+        <ThemeToggle />
+      </div>
+    </ThemeProvider>
   )
 }
