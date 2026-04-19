@@ -5,6 +5,9 @@ import { FolderSearch, Loader2, XCircle, AlertTriangle, Home } from "lucide-reac
 import { ThemeProvider } from "@/hooks/use-theme"
 import { useScan } from "@/hooks/use-scan"
 import { AppShell } from "@/components/app-shell"
+import { StatCards } from "@/components/dashboard/stat-cards"
+import { TypeChart } from "@/components/dashboard/type-chart"
+import { SizeRanking } from "@/components/dashboard/size-ranking"
 import { EnvTable } from "@/components/env-table/env-table"
 import { Button } from "@/components/ui/button"
 import { formatBytes } from "@/lib/format"
@@ -117,7 +120,14 @@ function ScanPage() {
       )}
 
       {(status === "completed" || status === "cancelled") && (
-        <EnvTable data={results} scanRoot={scanRoot} onDeleted={removeResult} />
+        <>
+          <StatCards data={results} />
+          <div className="grid gap-4 lg:grid-cols-2">
+            <TypeChart data={results} />
+            <SizeRanking data={results} scanRoot={scanRoot} />
+          </div>
+          <EnvTable data={results} scanRoot={scanRoot} onDeleted={removeResult} />
+        </>
       )}
 
       {status === "idle" && (
