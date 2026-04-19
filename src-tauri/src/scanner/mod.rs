@@ -47,6 +47,7 @@ impl EnvType {
 }
 
 #[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct EnvEntry {
     pub path: PathBuf,
     pub env_type: EnvType,

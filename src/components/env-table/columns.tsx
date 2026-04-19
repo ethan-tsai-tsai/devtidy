@@ -8,6 +8,15 @@ import type { EnvEntry } from "@/types/scan"
 
 export interface TableMeta {
   onDeleted: (path: string) => void
+  scanRoot: string | null
+}
+
+function toRelativePath(absolutePath: string, root: string | null): string {
+  if (!root) return absolutePath
+  const normalized = root.endsWith("/") ? root : `${root}/`
+  return absolutePath.startsWith(normalized)
+    ? absolutePath.slice(normalized.length)
+    : absolutePath
 }
 
 function SortableHeader({
@@ -51,11 +60,15 @@ export const columns: ColumnDef<EnvEntry>[] = [
   {
     accessorKey: "path",
     header: ({ column }) => <SortableHeader column={column}>Path</SortableHeader>,
-    cell: ({ row }) => (
-      <span className="max-w-[300px] truncate font-mono text-xs" title={row.original.path}>
-        {row.original.path}
-      </span>
-    ),
+    cell: ({ row, table }) => {
+      const meta = table.options.meta as TableMeta
+      const display = toRelativePath(row.original.path, meta.scanRoot)
+      return (
+        <span className="max-w-[300px] truncate font-mono text-xs" title={row.original.path}>
+          {display}
+        </span>
+      )
+    },
   },
   {
     accessorKey: "sizeBytes",
@@ -76,12 +89,14 @@ export const columns: ColumnDef<EnvEntry>[] = [
   {
     accessorKey: "hasProjectFile",
     header: ({ column }) => <SortableHeader column={column}>Project</SortableHeader>,
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
+      const meta = table.options.meta as TableMeta
       const { hasProjectFile, projectPath } = row.original
+      const display = projectPath ? toRelativePath(projectPath, meta.scanRoot) : null
       return hasProjectFile ? (
         <span className="flex items-center gap-1.5 text-xs" title={projectPath ?? undefined}>
           <FolderOpen className="size-3.5 text-green-500" />
-          <span className="max-w-[200px] truncate">{projectPath}</span>
+          <span className="max-w-[200px] truncate">{display}</span>
         </span>
       ) : (
         <span className="flex items-center gap-1.5 text-xs text-muted-foreground">

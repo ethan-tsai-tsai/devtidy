@@ -27,6 +27,9 @@ const SKIP_DIRS: &[&str] = &[
     "Program Files (x86)",
 ];
 
+/// Directories that are environments themselves — do not recurse into them.
+const ENV_DIRS: &[&str] = &["node_modules", ".venv", "venv", "__pypackages__"];
+
 /// Scans a root directory for virtual environments.
 #[must_use]
 pub fn scan(root: &Path, cancel: &AtomicBool) -> Vec<EnvEntry> {
@@ -35,7 +38,17 @@ pub fn scan(root: &Path, cancel: &AtomicBool) -> Vec<EnvEntry> {
         .skip_hidden(false)
         .follow_links(false)
         .sort(false)
-        .process_read_dir(|_depth, _path, _state, children| {
+        .process_read_dir(|_depth, path, _state, children| {
+            // If we are inside an environment directory, skip all children
+            let parent_name = path
+                .file_name()
+                .map(|n| n.to_string_lossy())
+                .unwrap_or_default();
+            if ENV_DIRS.contains(&parent_name.as_ref()) {
+                children.clear();
+                return;
+            }
+
             children.retain(|entry| {
                 entry
                     .as_ref()
@@ -158,6 +171,29 @@ mod tests {
         let results = scan(tmp.path(), &cancel);
 
         assert!(results.is_empty());
+    }
+
+    #[test]
+    fn skips_nested_node_modules() {
+        let tmp = TempDir::new().unwrap();
+        let root = tmp.path();
+
+        // Top-level node_modules with nested .pnpm structure
+        let proj = root.join("web-app");
+        fs::create_dir_all(proj.join("node_modules/.pnpm/some-pkg/node_modules")).unwrap();
+        fs::write(proj.join("package.json"), "{}\n").unwrap();
+
+        let cancel = AtomicBool::new(false);
+        let results = scan(root, &cancel);
+
+        // Should only find the top-level node_modules, not the nested one
+        let nm_results: Vec<_> = results
+            .iter()
+            .filter(|e| e.env_type == EnvType::NodeModules)
+            .collect();
+        assert_eq!(nm_results.len(), 1);
+        assert!(nm_results[0].path.ends_with("node_modules"));
+        assert!(!nm_results[0].path.to_string_lossy().contains(".pnpm"));
     }
 
     #[test]

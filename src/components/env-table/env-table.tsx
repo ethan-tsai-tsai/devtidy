@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import {
   type SortingState,
   type ColumnFiltersState,
@@ -17,21 +17,50 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { columns, type TableMeta } from "./columns"
+import { getEnvCategory } from "@/lib/format"
 import type { EnvEntry } from "@/types/scan"
+
+type CategoryFilter = "all" | "python" | "node"
+
+const CATEGORY_TABS: { value: CategoryFilter; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "python", label: "Python" },
+  { value: "node", label: "Node.js" },
+]
 
 interface EnvTableProps {
   data: EnvEntry[]
+  scanRoot: string | null
   onDeleted: (path: string) => void
 }
 
-export function EnvTable({ data, onDeleted }: EnvTableProps) {
+export function EnvTable({ data, scanRoot, onDeleted }: EnvTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState("")
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all")
+
+  const filteredData = useMemo(
+    () =>
+      categoryFilter === "all"
+        ? data
+        : data.filter((entry) => getEnvCategory(entry.envType) === categoryFilter),
+    [data, categoryFilter]
+  )
+
+  const categoryCounts = useMemo(() => {
+    const counts = { all: data.length, python: 0, node: 0 }
+    for (const entry of data) {
+      const cat = getEnvCategory(entry.envType)
+      counts[cat]++
+    }
+    return counts
+  }, [data])
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     state: { sorting, columnFilters, globalFilter },
     onSortingChange: setSorting,
@@ -40,17 +69,35 @@ export function EnvTable({ data, onDeleted }: EnvTableProps) {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    meta: { onDeleted } satisfies TableMeta,
+    meta: { onDeleted, scanRoot } satisfies TableMeta,
   })
 
   return (
     <div className="space-y-4">
-      <Input
-        placeholder="Search environments..."
-        value={globalFilter}
-        onChange={(e) => setGlobalFilter(e.target.value)}
-        className="max-w-sm"
-      />
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1 rounded-lg border p-1">
+          {CATEGORY_TABS.map((tab) => (
+            <Button
+              key={tab.value}
+              variant={categoryFilter === tab.value ? "default" : "ghost"}
+              size="sm"
+              className="h-7 gap-1.5 px-3 text-xs"
+              onClick={() => setCategoryFilter(tab.value)}
+            >
+              {tab.label}
+              <span className="tabular-nums text-muted-foreground">
+                {categoryCounts[tab.value]}
+              </span>
+            </Button>
+          ))}
+        </div>
+        <Input
+          placeholder="Search environments..."
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          className="max-w-sm"
+        />
+      </div>
       <div className="rounded-lg border">
         <Table>
           <TableHeader>

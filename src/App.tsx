@@ -1,6 +1,7 @@
-import { Component, useMemo, type ReactNode } from "react"
+import { Component, useMemo, useState, type ReactNode } from "react"
 import { homeDir } from "@tauri-apps/api/path"
-import { FolderSearch, Loader2, XCircle, AlertTriangle } from "lucide-react"
+import { open } from "@tauri-apps/plugin-dialog"
+import { FolderSearch, Loader2, XCircle, AlertTriangle, Home } from "lucide-react"
 import { ThemeProvider } from "@/hooks/use-theme"
 import { useScan } from "@/hooks/use-scan"
 import { AppShell } from "@/components/app-shell"
@@ -44,14 +45,27 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
 function ScanPage() {
   const { status, results, durationMs, error, startScan, cancelScan, removeResult } = useScan()
+  const [scanRoot, setScanRoot] = useState<string | null>(null)
 
   const totalSize = useMemo(
     () => results.reduce((sum, r) => sum + r.sizeBytes, 0),
     [results]
   )
 
-  const handleScan = async () => {
+  const handleScanFolder = async () => {
+    const selected = await open({
+      directory: true,
+      title: "Select folder to scan",
+    })
+    if (selected) {
+      setScanRoot(selected)
+      void startScan(selected)
+    }
+  }
+
+  const handleScanHome = async () => {
     const home = await homeDir()
+    setScanRoot(home)
     void startScan(home)
   }
 
@@ -64,6 +78,7 @@ function ScanPage() {
             <p className="text-sm text-muted-foreground">
               {results.length} found &middot; {formatBytes(totalSize)} total
               {durationMs !== null && ` · ${(durationMs / 1000).toFixed(1)}s`}
+              {scanRoot && ` · ${scanRoot}`}
             </p>
           )}
         </div>
@@ -74,10 +89,16 @@ function ScanPage() {
               Cancel
             </Button>
           ) : (
-            <Button onClick={() => { void handleScan() }}>
-              <FolderSearch className="size-4" />
-              Scan
-            </Button>
+            <>
+              <Button onClick={() => { void handleScanFolder() }}>
+                <FolderSearch className="size-4" />
+                Scan Folder
+              </Button>
+              <Button variant="outline" onClick={() => { void handleScanHome() }}>
+                <Home className="size-4" />
+                Scan Home
+              </Button>
+            </>
           )}
         </div>
       </div>
@@ -96,7 +117,7 @@ function ScanPage() {
       )}
 
       {(status === "completed" || status === "cancelled") && (
-        <EnvTable data={results} onDeleted={removeResult} />
+        <EnvTable data={results} scanRoot={scanRoot} onDeleted={removeResult} />
       )}
 
       {status === "idle" && (
