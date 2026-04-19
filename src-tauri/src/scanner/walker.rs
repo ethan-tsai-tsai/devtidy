@@ -52,7 +52,7 @@ pub fn scan(root: &Path, cancel: &AtomicBool) -> Vec<EnvEntry> {
         })
         .into_iter()
         .filter_map(|entry| {
-            if cancel.load(Ordering::Relaxed) {
+            if cancel.load(Ordering::Acquire) {
                 return None;
             }
             let entry = entry.ok()?;
@@ -64,7 +64,7 @@ pub fn scan(root: &Path, cancel: &AtomicBool) -> Vec<EnvEntry> {
         })
         .collect();
 
-    if cancel.load(Ordering::Relaxed) {
+    if cancel.load(Ordering::Acquire) {
         return Vec::new();
     }
 
@@ -72,7 +72,7 @@ pub fn scan(root: &Path, cancel: &AtomicBool) -> Vec<EnvEntry> {
     detected
         .par_iter()
         .filter_map(|(path, env_type)| {
-            if cancel.load(Ordering::Relaxed) {
+            if cancel.load(Ordering::Acquire) {
                 return None;
             }
             let size_bytes = dir_size(path);
