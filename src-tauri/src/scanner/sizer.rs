@@ -4,9 +4,11 @@ use jwalk::WalkDir;
 
 /// Calculates total size of a directory by summing all file sizes.
 /// Uses jwalk for parallel traversal of large directories.
+#[must_use]
 pub fn dir_size(path: &Path) -> u64 {
     WalkDir::new(path)
         .skip_hidden(false)
+        .follow_links(false)
         .into_iter()
         .filter_map(|entry| entry.ok())
         .filter_map(|entry| entry.metadata().ok())

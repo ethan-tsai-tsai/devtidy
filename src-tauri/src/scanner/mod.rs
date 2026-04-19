@@ -34,8 +34,14 @@ impl EnvType {
 
     pub fn category(&self) -> &'static str {
         match self {
+            Self::PythonVenv
+            | Self::PythonVirtualenv
+            | Self::Conda
+            | Self::Uv
+            | Self::Poetry
+            | Self::Pipenv
+            | Self::Pyenv => "Python",
             Self::NodeModules => "Node.js",
-            _ => "Python",
         }
     }
 }

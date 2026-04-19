@@ -1,13 +1,13 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use chrono::{DateTime, Utc};
 use jwalk::WalkDir;
 use rayon::prelude::*;
 
-use super::detector::{detect_env, find_project_root, has_project_files};
+use super::detector::{detect_env, find_project_root};
 use super::sizer::dir_size;
-use super::EnvEntry;
+use super::{EnvEntry, EnvType};
 
 /// Directories to skip during scanning (performance optimization).
 const SKIP_DIRS: &[&str] = &[
@@ -28,9 +28,12 @@ const SKIP_DIRS: &[&str] = &[
 ];
 
 /// Scans a root directory for virtual environments.
+#[must_use]
 pub fn scan(root: &Path, cancel: &AtomicBool) -> Vec<EnvEntry> {
-    let detected: Vec<std::path::PathBuf> = WalkDir::new(root)
+    // Phase 1: walk the tree, detect env type once per directory
+    let detected: Vec<(PathBuf, EnvType)> = WalkDir::new(root)
         .skip_hidden(false)
+        .follow_links(false)
         .sort(false)
         .process_read_dir(|_depth, _path, _state, children| {
             children.retain(|entry| {
@@ -57,7 +60,7 @@ pub fn scan(root: &Path, cancel: &AtomicBool) -> Vec<EnvEntry> {
                 return None;
             }
             let path = entry.path();
-            detect_env(&path).map(|_| path)
+            detect_env(&path).map(|env_type| (path, env_type))
         })
         .collect();
 
@@ -65,24 +68,21 @@ pub fn scan(root: &Path, cancel: &AtomicBool) -> Vec<EnvEntry> {
         return Vec::new();
     }
 
+    // Phase 2: enrich each detected env with size, metadata, project info (parallel)
     detected
         .par_iter()
-        .filter_map(|path| {
+        .filter_map(|(path, env_type)| {
             if cancel.load(Ordering::Relaxed) {
                 return None;
             }
-            let env_type = detect_env(path)?;
             let size_bytes = dir_size(path);
             let last_modified = get_last_modified(path);
             let project_path = find_project_root(path);
-            let has_project_file = project_path
-                .as_ref()
-                .map(|p| has_project_files(p))
-                .unwrap_or(false);
+            let has_project_file = project_path.is_some();
 
             Some(EnvEntry {
                 path: path.clone(),
-                env_type,
+                env_type: env_type.clone(),
                 size_bytes,
                 last_modified,
                 project_path,
@@ -96,7 +96,7 @@ fn get_last_modified(path: &Path) -> DateTime<Utc> {
     std::fs::metadata(path)
         .and_then(|m| m.modified())
         .map(DateTime::<Utc>::from)
-        .unwrap_or_else(|_| Utc::now())
+        .unwrap_or(DateTime::UNIX_EPOCH)
 }
 
 #[cfg(test)]

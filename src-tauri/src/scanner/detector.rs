@@ -92,8 +92,7 @@ fn has_site_packages(path: &Path) -> bool {
         .any(|entry| {
             let name = entry.file_name();
             let name_str = name.to_string_lossy();
-            name_str.starts_with("python")
-                && entry.path().join("site-packages").is_dir()
+            name_str.starts_with("python") && entry.path().join("site-packages").is_dir()
         })
 }
 
@@ -148,11 +147,7 @@ mod tests {
         let tmp = TempDir::new().unwrap();
         let env = tmp.path().join(".venv");
         create_dir(&env, "");
-        create_file(
-            &env,
-            "pyvenv.cfg",
-            "home = /usr/bin\nuv = 0.5.1\n",
-        );
+        create_file(&env, "pyvenv.cfg", "home = /usr/bin\nuv = 0.5.1\n");
 
         assert_eq!(detect_env(&env), Some(EnvType::Uv));
     }
