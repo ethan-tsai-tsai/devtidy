@@ -17,14 +17,15 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
-import { columns } from "./columns"
+import { columns, type TableMeta } from "./columns"
 import type { EnvEntry } from "@/types/scan"
 
 interface EnvTableProps {
   data: EnvEntry[]
+  onDeleted: (path: string) => void
 }
 
-export function EnvTable({ data }: EnvTableProps) {
+export function EnvTable({ data, onDeleted }: EnvTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState("")
@@ -39,6 +40,7 @@ export function EnvTable({ data }: EnvTableProps) {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    meta: { onDeleted } satisfies TableMeta,
   })
 
   return (

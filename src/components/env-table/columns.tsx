@@ -2,8 +2,13 @@ import { type ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, FolderOpen, FolderX } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { DeleteDialog } from "./delete-dialog"
 import { formatBytes, formatRelativeTime, formatEnvType, getEnvCategory } from "@/lib/format"
 import type { EnvEntry } from "@/types/scan"
+
+export interface TableMeta {
+  onDeleted: (path: string) => void
+}
 
 function SortableHeader({
   column,
@@ -85,5 +90,14 @@ export const columns: ColumnDef<EnvEntry>[] = [
         </span>
       )
     },
+  },
+  {
+    id: "actions",
+    header: () => <span className="sr-only">Actions</span>,
+    cell: ({ row, table }) => {
+      const meta = table.options.meta as TableMeta
+      return <DeleteDialog entry={row.original} onDeleted={meta.onDeleted} />
+    },
+    enableSorting: false,
   },
 ]

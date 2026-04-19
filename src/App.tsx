@@ -43,7 +43,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 }
 
 function ScanPage() {
-  const { status, results, durationMs, error, startScan, cancelScan } = useScan()
+  const { status, results, durationMs, error, startScan, cancelScan, removeResult } = useScan()
 
   const totalSize = useMemo(
     () => results.reduce((sum, r) => sum + r.sizeBytes, 0),
@@ -95,7 +95,9 @@ function ScanPage() {
         </div>
       )}
 
-      {(status === "completed" || status === "cancelled") && <EnvTable data={results} />}
+      {(status === "completed" || status === "cancelled") && (
+        <EnvTable data={results} onDeleted={removeResult} />
+      )}
 
       {status === "idle" && (
         <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-12 text-center">

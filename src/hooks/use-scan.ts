@@ -74,5 +74,12 @@ export function useScan() {
     }
   }, [])
 
-  return { ...state, startScan, cancelScan }
+  const removeResult = useCallback((path: string) => {
+    setState((prev) => ({
+      ...prev,
+      results: prev.results.filter((r) => r.path !== path),
+    }))
+  }, [])
+
+  return { ...state, startScan, cancelScan, removeResult }
 }
