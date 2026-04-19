@@ -1,0 +1,89 @@
+import { type ColumnDef } from "@tanstack/react-table"
+import { ArrowUpDown, FolderOpen, FolderX } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { formatBytes, formatRelativeTime, formatEnvType, getEnvCategory } from "@/lib/format"
+import type { EnvEntry } from "@/types/scan"
+
+function SortableHeader({
+  column,
+  children,
+}: {
+  column: { getToggleSortingHandler: () => ((event: unknown) => void) | undefined; getIsSorted: () => false | "asc" | "desc" }
+  children: React.ReactNode
+}) {
+  const sorted = column.getIsSorted()
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      className="-ml-2 h-8 gap-1"
+      onClick={column.getToggleSortingHandler()}
+    >
+      {children}
+      <ArrowUpDown className="size-3.5 opacity-50" />
+      {sorted === "asc" && <span className="sr-only">(ascending)</span>}
+      {sorted === "desc" && <span className="sr-only">(descending)</span>}
+    </Button>
+  )
+}
+
+export const columns: ColumnDef<EnvEntry>[] = [
+  {
+    accessorKey: "envType",
+    header: ({ column }) => <SortableHeader column={column}>Type</SortableHeader>,
+    cell: ({ row }) => {
+      const envType = row.original.envType
+      const category = getEnvCategory(envType)
+      return (
+        <Badge variant={category === "python" ? "default" : "secondary"}>
+          {formatEnvType(envType)}
+        </Badge>
+      )
+    },
+    filterFn: "equals",
+  },
+  {
+    accessorKey: "path",
+    header: ({ column }) => <SortableHeader column={column}>Path</SortableHeader>,
+    cell: ({ row }) => (
+      <span className="max-w-[300px] truncate font-mono text-xs" title={row.original.path}>
+        {row.original.path}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "sizeBytes",
+    header: ({ column }) => <SortableHeader column={column}>Size</SortableHeader>,
+    cell: ({ row }) => (
+      <span className="tabular-nums">{formatBytes(row.original.sizeBytes)}</span>
+    ),
+  },
+  {
+    accessorKey: "lastModified",
+    header: ({ column }) => <SortableHeader column={column}>Last Modified</SortableHeader>,
+    cell: ({ row }) => (
+      <span className="text-muted-foreground" title={row.original.lastModified}>
+        {formatRelativeTime(row.original.lastModified)}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "hasProjectFile",
+    header: ({ column }) => <SortableHeader column={column}>Project</SortableHeader>,
+    cell: ({ row }) => {
+      const { hasProjectFile, projectPath } = row.original
+      return hasProjectFile ? (
+        <span className="flex items-center gap-1.5 text-xs" title={projectPath ?? undefined}>
+          <FolderOpen className="size-3.5 text-green-500" />
+          <span className="max-w-[200px] truncate">{projectPath}</span>
+        </span>
+      ) : (
+        <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <FolderX className="size-3.5 text-destructive" />
+          Orphan
+        </span>
+      )
+    },
+  },
+]
