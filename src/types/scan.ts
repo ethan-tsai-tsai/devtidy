@@ -19,6 +19,20 @@ export interface EnvEntry {
   hasProjectFile: boolean
 }
 
+/** Cached scan result loaded from SQLite on startup. */
+export interface ScanCache {
+  rootPath: string
+  scannedAt: string
+  durationMs: number
+  results: EnvEntry[]
+}
+
+/** Application settings stored in SQLite. */
+export interface AppSettings {
+  scanDepth: number
+  extraExcludes: string[]
+}
+
 /** Discriminated union of scan events streamed from backend via Channel. */
 export type ScanEvent =
   | { event: "started"; data: { root: string } }

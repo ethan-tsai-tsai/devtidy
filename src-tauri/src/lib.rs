@@ -1,5 +1,8 @@
 mod commands;
+mod db;
 pub mod scanner;
+
+use tauri::Manager;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -14,6 +17,16 @@ pub fn run() {
                         .build(),
                 )?;
             }
+
+            let db_path = app
+                .path()
+                .app_data_dir()
+                .expect("failed to resolve app data dir")
+                .join("devtidy.db");
+
+            let conn = db::init(&db_path).expect("failed to initialise database");
+            app.handle().manage(db::DbState(std::sync::Mutex::new(conn)));
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -21,6 +34,10 @@ pub fn run() {
             commands::scan::cancel_scan,
             commands::delete::delete_env,
             commands::delete::delete_envs,
+            commands::cache::load_scan_cache,
+            commands::settings::get_settings,
+            commands::settings::save_settings,
+            commands::rename::rename_env,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

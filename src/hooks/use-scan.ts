@@ -1,6 +1,6 @@
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { invoke, Channel } from "@tauri-apps/api/core"
-import type { EnvEntry, ScanEvent } from "@/types/scan"
+import type { EnvEntry, ScanCache, ScanEvent } from "@/types/scan"
 
 export type ScanStatus = "idle" | "scanning" | "completed" | "cancelled" | "error"
 
@@ -22,11 +22,33 @@ const INITIAL_STATE: ScanState = {
 
 export function useScan() {
   const [state, setState] = useState<ScanState>(INITIAL_STATE)
+  const [scanRoot, setScanRoot] = useState<string | null>(null)
   const scanningRef = useRef(false)
+
+  // Load cached scan results on startup.
+  useEffect(() => {
+    invoke<ScanCache | null>("load_scan_cache")
+      .then((cache) => {
+        if (cache && cache.results.length > 0) {
+          setScanRoot(cache.rootPath)
+          setState({
+            status: "completed",
+            results: cache.results,
+            durationMs: cache.durationMs,
+            error: null,
+            currentPath: null,
+          })
+        }
+      })
+      .catch(() => {
+        // Silently ignore cache load failures.
+      })
+  }, [])
 
   const startScan = useCallback(async (root: string) => {
     if (scanningRef.current) return
     scanningRef.current = true
+    setScanRoot(root)
 
     setState({ status: "scanning", results: [], durationMs: null, error: null, currentPath: null })
 
@@ -89,5 +111,14 @@ export function useScan() {
     }))
   }, [])
 
-  return { ...state, startScan, cancelScan, removeResult }
+  const renameResult = useCallback((oldPath: string, newPath: string) => {
+    setState((prev) => ({
+      ...prev,
+      results: prev.results.map((r) =>
+        r.path === oldPath ? { ...r, path: newPath } : r
+      ),
+    }))
+  }, [])
+
+  return { ...state, scanRoot, startScan, cancelScan, removeResult, renameResult }
 }

@@ -10,6 +10,15 @@ use super::detector::{detect_env, find_project_root};
 use super::sizer::dir_size;
 use super::{EnvEntry, EnvType};
 
+/// Configuration passed to [`scan`] to control scanner behaviour.
+#[derive(Debug, Default)]
+pub struct ScanConfig {
+    /// Maximum directory depth (0 = unlimited).
+    pub max_depth: u32,
+    /// Additional directory names to skip (in addition to the built-in list).
+    pub extra_excludes: Vec<String>,
+}
+
 /// Directories to skip during scanning (performance optimization).
 const SKIP_DIRS: &[&str] = &[
     ".git",
@@ -40,15 +49,23 @@ pub fn scan(
     root: &Path,
     cancel: &AtomicBool,
     on_progress: impl Fn(&Path) + Send,
+    config: &ScanConfig,
 ) -> Vec<EnvEntry> {
     const PROGRESS_INTERVAL: Duration = Duration::from_millis(100);
     let mut last_progress = Instant::now() - PROGRESS_INTERVAL;
+    let extra: Vec<String> = config.extra_excludes.clone();
+
     // Phase 1: walk the tree, detect env type once per directory
-    let detected: Vec<(PathBuf, EnvType)> = WalkDir::new(root)
+    let mut walker = WalkDir::new(root)
         .skip_hidden(false)
         .follow_links(false)
-        .sort(false)
-        .process_read_dir(|_depth, path, _state, children| {
+        .sort(false);
+    if config.max_depth > 0 {
+        walker = walker.max_depth(config.max_depth as usize);
+    }
+
+    let detected: Vec<(PathBuf, EnvType)> = walker
+        .process_read_dir(move |_depth, path, _state, children| {
             // If we are inside an environment directory, skip all children
             let parent_name = path
                 .file_name()
@@ -68,7 +85,7 @@ pub fn scan(
                             return false;
                         }
                         let name = e.file_name().to_string_lossy();
-                        !SKIP_DIRS.contains(&name.as_ref())
+                        !SKIP_DIRS.contains(&name.as_ref()) && !extra.iter().any(|ex| ex == name.as_ref())
                     })
                     .unwrap_or(false)
             });
@@ -161,7 +178,7 @@ mod tests {
         let tmp = setup_test_tree();
         let cancel = AtomicBool::new(false);
 
-        let results = scan(tmp.path(), &cancel, |_| {});
+        let results = scan(tmp.path(), &cancel, |_| {}, &ScanConfig::default());
 
         assert_eq!(results.len(), 3);
     }
@@ -171,7 +188,7 @@ mod tests {
         let tmp = setup_test_tree();
         let cancel = AtomicBool::new(false);
 
-        let results = scan(tmp.path(), &cancel, |_| {});
+        let results = scan(tmp.path(), &cancel, |_| {}, &ScanConfig::default());
         let orphans: Vec<_> = results.iter().filter(|e| !e.has_project_file).collect();
 
         assert_eq!(orphans.len(), 1);
@@ -183,7 +200,7 @@ mod tests {
         let tmp = setup_test_tree();
         let cancel = AtomicBool::new(true);
 
-        let results = scan(tmp.path(), &cancel, |_| {});
+        let results = scan(tmp.path(), &cancel, |_| {}, &ScanConfig::default());
 
         assert!(results.is_empty());
     }
@@ -199,7 +216,7 @@ mod tests {
         fs::write(proj.join("package.json"), "{}\n").unwrap();
 
         let cancel = AtomicBool::new(false);
-        let results = scan(root, &cancel, |_| {});
+        let results = scan(root, &cancel, |_| {}, &ScanConfig::default());
 
         // Should only find the top-level node_modules, not the nested one
         let nm_results: Vec<_> = results
@@ -219,7 +236,7 @@ mod tests {
 
         let _ = scan(tmp.path(), &cancel, |_| {
             count.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-        });
+        }, &ScanConfig::default());
 
         // Progress should fire at least once for a non-trivial tree.
         // Exact count is throttled, but with a fresh timer it fires on first dir.
@@ -233,7 +250,7 @@ mod tests {
         fs::create_dir_all(&git_nm).unwrap();
 
         let cancel = AtomicBool::new(false);
-        let results = scan(tmp.path(), &cancel, |_| {});
+        let results = scan(tmp.path(), &cancel, |_| {}, &ScanConfig::default());
 
         assert!(results.is_empty());
     }
