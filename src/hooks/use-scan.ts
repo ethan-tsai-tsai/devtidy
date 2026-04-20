@@ -111,14 +111,5 @@ export function useScan() {
     }))
   }, [])
 
-  const renameResult = useCallback((oldPath: string, newPath: string) => {
-    setState((prev) => ({
-      ...prev,
-      results: prev.results.map((r) =>
-        r.path === oldPath ? { ...r, path: newPath } : r
-      ),
-    }))
-  }, [])
-
-  return { ...state, scanRoot, startScan, cancelScan, removeResult, renameResult }
+  return { ...state, scanRoot, startScan, cancelScan, removeResult }
 }

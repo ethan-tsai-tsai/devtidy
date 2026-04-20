@@ -85,7 +85,7 @@ function DiskAccessBanner() {
 }
 
 function ScanPage() {
-  const { status, results, durationMs, error, currentPath, scanRoot, startScan, cancelScan, removeResult, renameResult } = useScan()
+  const { status, results, durationMs, error, currentPath, scanRoot, startScan, cancelScan, removeResult } = useScan()
 
   const totalSize = useMemo(
     () => results.reduce((sum, r) => sum + r.sizeBytes, 0),
@@ -167,7 +167,7 @@ function ScanPage() {
             <TypeChart data={results} />
             <SizeRanking data={results} scanRoot={scanRoot} />
           </div>
-          <EnvTable data={results} scanRoot={scanRoot} onDeleted={removeResult} onRenamed={renameResult} />
+          <EnvTable data={results} scanRoot={scanRoot} onDeleted={removeResult} />
         </>
       )}
 

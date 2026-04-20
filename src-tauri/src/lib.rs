@@ -37,7 +37,6 @@ pub fn run() {
             commands::cache::load_scan_cache,
             commands::settings::get_settings,
             commands::settings::save_settings,
-            commands::rename::rename_env,
             commands::permissions::check_full_disk_access,
         ])
         .run(tauri::generate_context!())
