@@ -1,3 +1,15 @@
+/// Opens macOS System Settings to the Full Disk Access pane.
+/// No-op on non-macOS platforms.
+#[tauri::command]
+pub fn open_full_disk_access_settings() {
+    #[cfg(target_os = "macos")]
+    {
+        let _ = std::process::Command::new("open")
+            .arg("x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles")
+            .spawn();
+    }
+}
+
 /// Checks whether the app has Full Disk Access on macOS by probing a
 /// protected directory. On non-macOS platforms this always returns true.
 #[tauri::command]

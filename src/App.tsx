@@ -73,13 +73,21 @@ function DiskAccessBanner() {
           <strong>System Settings → Privacy & Security → Full Disk Access</strong>.
         </p>
       </div>
-      <button
-        onClick={() => setDismissed(true)}
-        className="mt-0.5 rounded-sm opacity-60 hover:opacity-100"
-        aria-label="Dismiss"
-      >
-        <X className="size-4" />
-      </button>
+      <div className="flex shrink-0 items-center gap-2">
+        <button
+          onClick={() => void invoke("open_full_disk_access_settings")}
+          className="rounded-sm text-xs font-medium text-yellow-700 underline underline-offset-2 opacity-80 hover:opacity-100 dark:text-yellow-400"
+        >
+          Open Settings
+        </button>
+        <button
+          onClick={() => setDismissed(true)}
+          className="rounded-sm opacity-60 hover:opacity-100"
+          aria-label="Dismiss"
+        >
+          <X className="size-4" />
+        </button>
+      </div>
     </div>
   )
 }
