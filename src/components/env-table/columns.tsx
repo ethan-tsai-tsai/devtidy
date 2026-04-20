@@ -112,10 +112,9 @@ export const columns: ColumnDef<EnvEntry>[] = [
   {
     accessorKey: "hasProjectFile",
     header: ({ column }) => <SortableHeader column={column}>Project</SortableHeader>,
-    cell: ({ row, table }) => {
-      const meta = table.options.meta as TableMeta
+    cell: ({ row }) => {
       const { hasProjectFile, projectPath } = row.original
-      const display = projectPath ? toRelativePath(projectPath, meta.scanRoot) : null
+      const display = projectPath ? (projectPath.split("/").pop() ?? projectPath) : null
       return hasProjectFile ? (
         <span className="flex items-center gap-1.5 text-xs" title={projectPath ?? undefined}>
           <FolderOpen className="size-3.5 text-green-500" />
