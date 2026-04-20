@@ -9,8 +9,11 @@ import { StatCards } from "@/components/dashboard/stat-cards"
 import { TypeChart } from "@/components/dashboard/type-chart"
 import { SizeRanking } from "@/components/dashboard/size-ranking"
 import { EnvTable } from "@/components/env-table/env-table"
+import { SettingsPage } from "@/components/settings/settings-page"
 import { Button } from "@/components/ui/button"
 import { formatBytes } from "@/lib/format"
+
+type AppTab = "scan" | "settings"
 
 interface ErrorBoundaryProps {
   children: ReactNode
@@ -47,8 +50,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 }
 
 function ScanPage() {
-  const { status, results, durationMs, error, currentPath, startScan, cancelScan, removeResult } = useScan()
-  const [scanRoot, setScanRoot] = useState<string | null>(null)
+  const { status, results, durationMs, error, currentPath, scanRoot, startScan, cancelScan, removeResult, renameResult } = useScan()
 
   const totalSize = useMemo(
     () => results.reduce((sum, r) => sum + r.sizeBytes, 0),
@@ -60,15 +62,11 @@ function ScanPage() {
       directory: true,
       title: "Select folder to scan",
     })
-    if (selected) {
-      setScanRoot(selected)
-      void startScan(selected)
-    }
+    if (selected) void startScan(selected)
   }
 
   const handleScanHome = async () => {
     const home = await homeDir()
-    setScanRoot(home)
     void startScan(home)
   }
 
@@ -133,7 +131,7 @@ function ScanPage() {
             <TypeChart data={results} />
             <SizeRanking data={results} scanRoot={scanRoot} />
           </div>
-          <EnvTable data={results} scanRoot={scanRoot} onDeleted={removeResult} />
+          <EnvTable data={results} scanRoot={scanRoot} onDeleted={removeResult} onRenamed={renameResult} />
         </>
       )}
 
@@ -153,11 +151,12 @@ function ScanPage() {
 }
 
 export function App() {
+  const [tab, setTab] = useState<AppTab>("scan")
   return (
     <ThemeProvider>
-      <AppShell>
+      <AppShell tab={tab} onTabChange={setTab}>
         <ErrorBoundary>
-          <ScanPage />
+          {tab === "scan" ? <ScanPage /> : <SettingsPage />}
         </ErrorBoundary>
       </AppShell>
     </ThemeProvider>
