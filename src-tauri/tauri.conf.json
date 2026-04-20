@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "DevTidy",
   "version": "0.1.0",
-  "identifier": "com.devtidy.app",
+  "identifier": "com.devtidy.desktop",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
@@ -13,8 +13,10 @@
     "windows": [
       {
         "title": "DevTidy",
-        "width": 800,
-        "height": 600,
+        "width": 1200,
+        "height": 750,
+        "minWidth": 900,
+        "minHeight": 600,
         "resizable": true,
         "fullscreen": false
       }
@@ -32,6 +34,14 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "category": "DeveloperTool",
+    "shortDescription": "Virtual environment manager",
+    "longDescription": "DevTidy scans your system for Python virtual environments and Node.js node_modules, shows disk usage, and lets you safely delete them to reclaim space.",
+    "macOS": {
+      "minimumSystemVersion": "11.0",
+      "signingIdentity": null,
+      "entitlements": null
+    }
   }
 }
