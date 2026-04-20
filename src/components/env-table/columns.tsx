@@ -2,6 +2,7 @@ import { type ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, FolderOpen, FolderX } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { DeleteDialog } from "./delete-dialog"
 import { formatBytes, formatRelativeTime, formatEnvType, getEnvCategory } from "@/lib/format"
 import type { EnvEntry } from "@/types/scan"
@@ -43,6 +44,26 @@ function SortableHeader({
 }
 
 export const columns: ColumnDef<EnvEntry>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        indeterminate={table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()}
+        onCheckedChange={(checked) => table.toggleAllPageRowsSelected(!!checked)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(checked) => row.toggleSelected(!!checked)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "envType",
     header: ({ column }) => <SortableHeader column={column}>Type</SortableHeader>,

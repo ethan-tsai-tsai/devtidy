@@ -20,6 +20,7 @@ pub fn run() {
             commands::scan::scan_envs,
             commands::scan::cancel_scan,
             commands::delete::delete_env,
+            commands::delete::delete_envs,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
