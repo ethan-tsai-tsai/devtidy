@@ -60,9 +60,9 @@ export function DeleteDialog({ entry, onDeleted }: DeleteDialogProps) {
               <dt className="text-muted-foreground">Size</dt>
               <dd className="font-medium tabular-nums">{formatBytes(entry.sizeBytes)}</dd>
             </div>
-            <div className="flex justify-between gap-4">
-              <dt className="shrink-0 text-muted-foreground">Path</dt>
-              <dd className="min-w-0 truncate font-mono">{entry.path}</dd>
+            <div className="flex flex-col gap-0.5">
+              <dt className="text-muted-foreground">Path</dt>
+              <dd className="break-all font-mono">{entry.path}</dd>
             </div>
           </dl>
         </div>
