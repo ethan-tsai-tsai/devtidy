@@ -81,6 +81,25 @@ export const columns: ColumnDef<EnvEntry>[] = [
     filterFn: "equals",
   },
   {
+    accessorKey: "hasProjectFile",
+    header: ({ column }) => <SortableHeader column={column}>Project</SortableHeader>,
+    cell: ({ row }) => {
+      const { hasProjectFile, projectPath } = row.original
+      const display = projectPath ? (projectPath.split("/").pop() ?? projectPath) : null
+      return hasProjectFile ? (
+        <span className="flex items-center gap-1.5 text-xs" title={projectPath ?? undefined}>
+          <FolderOpen className="size-3.5 text-green-500" />
+          <span className="max-w-[200px] truncate">{display}</span>
+        </span>
+      ) : (
+        <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <FolderX className="size-3.5 text-destructive" />
+          Orphan
+        </span>
+      )
+    },
+  },
+  {
     accessorKey: "path",
     header: ({ column }) => <SortableHeader column={column}>Path</SortableHeader>,
     cell: ({ row, table }) => {
@@ -108,25 +127,6 @@ export const columns: ColumnDef<EnvEntry>[] = [
         {formatRelativeTime(row.original.lastModified)}
       </span>
     ),
-  },
-  {
-    accessorKey: "hasProjectFile",
-    header: ({ column }) => <SortableHeader column={column}>Project</SortableHeader>,
-    cell: ({ row }) => {
-      const { hasProjectFile, projectPath } = row.original
-      const display = projectPath ? (projectPath.split("/").pop() ?? projectPath) : null
-      return hasProjectFile ? (
-        <span className="flex items-center gap-1.5 text-xs" title={projectPath ?? undefined}>
-          <FolderOpen className="size-3.5 text-green-500" />
-          <span className="max-w-[200px] truncate">{display}</span>
-        </span>
-      ) : (
-        <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <FolderX className="size-3.5 text-destructive" />
-          Orphan
-        </span>
-      )
-    },
   },
   {
     id: "actions",
