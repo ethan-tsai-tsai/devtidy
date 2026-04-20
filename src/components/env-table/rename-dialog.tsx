@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react"
 import { Loader2, Pencil } from "lucide-react"
 import { invoke } from "@tauri-apps/api/core"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -49,6 +50,7 @@ export function RenameDialog({ entry, onRenamed }: RenameDialogProps) {
         newName: trimmed,
       })
       setOpen(false)
+      toast.success("Renamed successfully")
       onRenamed(entry.path, newPath)
     } catch (e: unknown) {
       setError(String(e))

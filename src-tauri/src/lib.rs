@@ -38,6 +38,7 @@ pub fn run() {
             commands::settings::get_settings,
             commands::settings::save_settings,
             commands::rename::rename_env,
+            commands::permissions::check_full_disk_access,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

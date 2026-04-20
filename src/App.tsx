@@ -1,8 +1,10 @@
-import { Component, useMemo, useState, type ReactNode } from "react"
+import { Component, useEffect, useMemo, useState, type ReactNode } from "react"
 import { homeDir } from "@tauri-apps/api/path"
 import { open } from "@tauri-apps/plugin-dialog"
-import { FolderSearch, Loader2, XCircle, AlertTriangle, Home } from "lucide-react"
-import { ThemeProvider } from "@/hooks/use-theme"
+import { invoke } from "@tauri-apps/api/core"
+import { FolderSearch, Loader2, XCircle, AlertTriangle, Home, ShieldAlert, X } from "lucide-react"
+import { Toaster } from "sonner"
+import { ThemeProvider, useTheme } from "@/hooks/use-theme"
 import { useScan } from "@/hooks/use-scan"
 import { AppShell } from "@/components/app-shell"
 import { StatCards } from "@/components/dashboard/stat-cards"
@@ -49,6 +51,39 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 }
 
+function DiskAccessBanner() {
+  const [hasAccess, setHasAccess] = useState<boolean | null>(null)
+  const [dismissed, setDismissed] = useState(false)
+
+  useEffect(() => {
+    invoke<boolean>("check_full_disk_access")
+      .then(setHasAccess)
+      .catch(() => setHasAccess(true))
+  }, [])
+
+  if (hasAccess !== false || dismissed) return null
+
+  return (
+    <div className="flex items-start gap-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm">
+      <ShieldAlert className="mt-0.5 size-4 shrink-0 text-yellow-500" />
+      <div className="flex-1">
+        <p className="font-medium text-yellow-700 dark:text-yellow-400">Full Disk Access required</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          Some directories may be skipped. Grant access in{" "}
+          <strong>System Settings → Privacy & Security → Full Disk Access</strong>.
+        </p>
+      </div>
+      <button
+        onClick={() => setDismissed(true)}
+        className="mt-0.5 rounded-sm opacity-60 hover:opacity-100"
+        aria-label="Dismiss"
+      >
+        <X className="size-4" />
+      </button>
+    </div>
+  )
+}
+
 function ScanPage() {
   const { status, results, durationMs, error, currentPath, scanRoot, startScan, cancelScan, removeResult, renameResult } = useScan()
 
@@ -72,6 +107,7 @@ function ScanPage() {
 
   return (
     <div className="space-y-6">
+      <DiskAccessBanner />
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold">Environments</h2>
@@ -150,6 +186,14 @@ function ScanPage() {
   )
 }
 
+function ToasterWithTheme() {
+  const { theme } = useTheme()
+  const resolved = theme === "system"
+    ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+    : theme
+  return <Toaster theme={resolved} richColors closeButton position="bottom-right" />
+}
+
 export function App() {
   const [tab, setTab] = useState<AppTab>("scan")
   return (
@@ -159,6 +203,7 @@ export function App() {
           {tab === "scan" ? <ScanPage /> : <SettingsPage />}
         </ErrorBoundary>
       </AppShell>
+      <ToasterWithTheme />
     </ThemeProvider>
   )
 }
