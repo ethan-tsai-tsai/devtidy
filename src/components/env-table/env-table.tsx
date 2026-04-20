@@ -46,9 +46,10 @@ interface EnvTableProps {
   data: EnvEntry[]
   scanRoot: string | null
   onDeleted: (path: string) => void
+  onRenamed: (oldPath: string, newPath: string) => void
 }
 
-export function EnvTable({ data, scanRoot, onDeleted }: EnvTableProps) {
+export function EnvTable({ data, scanRoot, onDeleted, onRenamed }: EnvTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState("")
@@ -112,7 +113,7 @@ export function EnvTable({ data, scanRoot, onDeleted }: EnvTableProps) {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    meta: { onDeleted: handleSingleDeleted, scanRoot } satisfies TableMeta,
+    meta: { onDeleted: handleSingleDeleted, onRenamed, scanRoot } satisfies TableMeta,
   })
 
   const selectedEntries = table.getSelectedRowModel().rows.map((r) => r.original)

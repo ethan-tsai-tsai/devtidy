@@ -4,11 +4,13 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DeleteDialog } from "./delete-dialog"
+import { RenameDialog } from "./rename-dialog"
 import { formatBytes, formatRelativeTime, formatEnvType, getEnvCategory } from "@/lib/format"
 import type { EnvEntry } from "@/types/scan"
 
 export interface TableMeta {
   onDeleted: (path: string) => void
+  onRenamed: (oldPath: string, newPath: string) => void
   scanRoot: string | null
 }
 
@@ -132,7 +134,12 @@ export const columns: ColumnDef<EnvEntry>[] = [
     header: () => <span className="sr-only">Actions</span>,
     cell: ({ row, table }) => {
       const meta = table.options.meta as TableMeta
-      return <DeleteDialog entry={row.original} onDeleted={meta.onDeleted} />
+      return (
+        <div className="flex items-center gap-1">
+          <RenameDialog entry={row.original} onRenamed={meta.onRenamed} />
+          <DeleteDialog entry={row.original} onDeleted={meta.onDeleted} />
+        </div>
+      )
     },
     enableSorting: false,
   },
