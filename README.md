@@ -67,7 +67,7 @@ Download the latest release from the [Releases page](../../releases).
 
 ### macOS
 
-1. Download `DevTidy_x.x.x_aarch64.dmg` (Apple Silicon) or `_x86_64.dmg` (Intel)
+1. Download `DevTidy_x.x.x_aarch64.dmg` (Apple Silicon — Intel not yet supported)
 2. Open the `.dmg` and drag **DevTidy** to your Applications folder
 3. On first launch, if you see a "Full Disk Access required" banner, click **Open Settings** — the app takes you there directly
 
