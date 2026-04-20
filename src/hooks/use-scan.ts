@@ -60,6 +60,7 @@ export function useScan() {
           scanningRef.current = false
           break
         case "started":
+          setState((prev) => ({ ...prev, currentPath: null }))
           break
       }
     }

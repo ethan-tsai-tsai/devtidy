@@ -1,5 +1,6 @@
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::time::{Duration, Instant};
 
 use chrono::{DateTime, Utc};
 use jwalk::WalkDir;
@@ -32,13 +33,16 @@ const ENV_DIRS: &[&str] = &["node_modules", ".venv", "venv", "__pypackages__"];
 
 /// Scans a root directory for virtual environments.
 ///
-/// `on_progress` is called with the current directory path during the walk phase.
+/// `on_progress` is called with the current directory path during the walk phase,
+/// throttled to at most once per 100 ms to avoid IPC flooding.
 #[must_use]
 pub fn scan(
     root: &Path,
     cancel: &AtomicBool,
-    on_progress: impl Fn(&Path) + Send + Sync,
+    on_progress: impl Fn(&Path) + Send,
 ) -> Vec<EnvEntry> {
+    const PROGRESS_INTERVAL: Duration = Duration::from_millis(100);
+    let mut last_progress = Instant::now() - PROGRESS_INTERVAL;
     // Phase 1: walk the tree, detect env type once per directory
     let detected: Vec<(PathBuf, EnvType)> = WalkDir::new(root)
         .skip_hidden(false)
@@ -79,7 +83,11 @@ pub fn scan(
                 return None;
             }
             let path = entry.path();
-            on_progress(&path);
+            let now = Instant::now();
+            if now.duration_since(last_progress) >= PROGRESS_INTERVAL {
+                last_progress = now;
+                on_progress(&path);
+            }
             detect_env(&path).map(|env_type| (path, env_type))
         })
         .collect();
@@ -201,6 +209,21 @@ mod tests {
         assert_eq!(nm_results.len(), 1);
         assert!(nm_results[0].path.ends_with("node_modules"));
         assert!(!nm_results[0].path.to_string_lossy().contains(".pnpm"));
+    }
+
+    #[test]
+    fn reports_progress_during_scan() {
+        let tmp = setup_test_tree();
+        let cancel = AtomicBool::new(false);
+        let count = std::sync::atomic::AtomicUsize::new(0);
+
+        let _ = scan(tmp.path(), &cancel, |_| {
+            count.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        });
+
+        // Progress should fire at least once for a non-trivial tree.
+        // Exact count is throttled, but with a fresh timer it fires on first dir.
+        assert!(count.load(std::sync::atomic::Ordering::Relaxed) > 0);
     }
 
     #[test]
