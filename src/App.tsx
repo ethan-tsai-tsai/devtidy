@@ -47,7 +47,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 }
 
 function ScanPage() {
-  const { status, results, durationMs, error, startScan, cancelScan, removeResult } = useScan()
+  const { status, results, durationMs, error, currentPath, startScan, cancelScan, removeResult } = useScan()
   const [scanRoot, setScanRoot] = useState<string | null>(null)
 
   const totalSize = useMemo(
@@ -108,8 +108,15 @@ function ScanPage() {
 
       {status === "scanning" && (
         <div className="flex items-center gap-3 rounded-lg border border-dashed p-8">
-          <Loader2 className="size-5 animate-spin text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">Scanning for environments...</p>
+          <Loader2 className="size-5 shrink-0 animate-spin text-muted-foreground" />
+          <div className="min-w-0">
+            <p className="text-sm text-muted-foreground">Scanning for environments...</p>
+            {currentPath && (
+              <p className="truncate font-mono text-xs text-muted-foreground/60" title={currentPath}>
+                {currentPath}
+              </p>
+            )}
+          </div>
         </div>
       )}
 

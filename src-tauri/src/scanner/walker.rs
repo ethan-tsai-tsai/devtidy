@@ -31,8 +31,14 @@ const SKIP_DIRS: &[&str] = &[
 const ENV_DIRS: &[&str] = &["node_modules", ".venv", "venv", "__pypackages__"];
 
 /// Scans a root directory for virtual environments.
+///
+/// `on_progress` is called with the current directory path during the walk phase.
 #[must_use]
-pub fn scan(root: &Path, cancel: &AtomicBool) -> Vec<EnvEntry> {
+pub fn scan(
+    root: &Path,
+    cancel: &AtomicBool,
+    on_progress: impl Fn(&Path) + Send + Sync,
+) -> Vec<EnvEntry> {
     // Phase 1: walk the tree, detect env type once per directory
     let detected: Vec<(PathBuf, EnvType)> = WalkDir::new(root)
         .skip_hidden(false)
@@ -73,6 +79,7 @@ pub fn scan(root: &Path, cancel: &AtomicBool) -> Vec<EnvEntry> {
                 return None;
             }
             let path = entry.path();
+            on_progress(&path);
             detect_env(&path).map(|env_type| (path, env_type))
         })
         .collect();
@@ -146,7 +153,7 @@ mod tests {
         let tmp = setup_test_tree();
         let cancel = AtomicBool::new(false);
 
-        let results = scan(tmp.path(), &cancel);
+        let results = scan(tmp.path(), &cancel, |_| {});
 
         assert_eq!(results.len(), 3);
     }
@@ -156,7 +163,7 @@ mod tests {
         let tmp = setup_test_tree();
         let cancel = AtomicBool::new(false);
 
-        let results = scan(tmp.path(), &cancel);
+        let results = scan(tmp.path(), &cancel, |_| {});
         let orphans: Vec<_> = results.iter().filter(|e| !e.has_project_file).collect();
 
         assert_eq!(orphans.len(), 1);
@@ -168,7 +175,7 @@ mod tests {
         let tmp = setup_test_tree();
         let cancel = AtomicBool::new(true);
 
-        let results = scan(tmp.path(), &cancel);
+        let results = scan(tmp.path(), &cancel, |_| {});
 
         assert!(results.is_empty());
     }
@@ -184,7 +191,7 @@ mod tests {
         fs::write(proj.join("package.json"), "{}\n").unwrap();
 
         let cancel = AtomicBool::new(false);
-        let results = scan(root, &cancel);
+        let results = scan(root, &cancel, |_| {});
 
         // Should only find the top-level node_modules, not the nested one
         let nm_results: Vec<_> = results
@@ -203,7 +210,7 @@ mod tests {
         fs::create_dir_all(&git_nm).unwrap();
 
         let cancel = AtomicBool::new(false);
-        let results = scan(tmp.path(), &cancel);
+        let results = scan(tmp.path(), &cancel, |_| {});
 
         assert!(results.is_empty());
     }

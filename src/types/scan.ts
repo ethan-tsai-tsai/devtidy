@@ -23,5 +23,6 @@ export interface EnvEntry {
 export type ScanEvent =
   | { event: "started"; data: { root: string } }
   | { event: "completed"; data: { results: EnvEntry[]; durationMs: number } }
+  | { event: "progress"; data: { currentPath: string } }
   | { event: "cancelled" }
   | { event: "error"; data: { message: string } }

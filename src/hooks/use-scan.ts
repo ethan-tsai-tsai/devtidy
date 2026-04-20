@@ -9,6 +9,7 @@ interface ScanState {
   results: EnvEntry[]
   durationMs: number | null
   error: string | null
+  currentPath: string | null
 }
 
 const INITIAL_STATE: ScanState = {
@@ -16,6 +17,7 @@ const INITIAL_STATE: ScanState = {
   results: [],
   durationMs: null,
   error: null,
+  currentPath: null,
 }
 
 export function useScan() {
@@ -26,7 +28,7 @@ export function useScan() {
     if (scanningRef.current) return
     scanningRef.current = true
 
-    setState({ status: "scanning", results: [], durationMs: null, error: null })
+    setState({ status: "scanning", results: [], durationMs: null, error: null, currentPath: null })
 
     const onEvent = new Channel<ScanEvent>()
     onEvent.onmessage = (event) => {
@@ -37,11 +39,15 @@ export function useScan() {
             results: event.data.results,
             durationMs: event.data.durationMs,
             error: null,
+            currentPath: null,
           })
           scanningRef.current = false
           break
+        case "progress":
+          setState((prev) => ({ ...prev, currentPath: event.data.currentPath }))
+          break
         case "cancelled":
-          setState((prev) => ({ ...prev, status: "cancelled" }))
+          setState((prev) => ({ ...prev, status: "cancelled", currentPath: null }))
           scanningRef.current = false
           break
         case "error":
@@ -49,6 +55,7 @@ export function useScan() {
             ...prev,
             status: "error",
             error: event.data.message,
+            currentPath: null,
           }))
           scanningRef.current = false
           break

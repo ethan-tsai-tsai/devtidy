@@ -37,6 +37,8 @@ pub enum ScanEvent {
     #[serde(rename = "cancelled")]
     Cancelled,
     #[serde(rename_all = "camelCase")]
+    Progress { current_path: String },
+    #[serde(rename_all = "camelCase")]
     Error { message: String },
 }
 
@@ -79,12 +81,18 @@ pub async fn scan_envs(
         .map_err(|e| format!("Channel closed before scan started: {e}"))?;
 
     let scan_flag = flag.clone();
+    let progress_channel = on_event.clone();
     let start = Instant::now();
 
-    let results =
-        tauri::async_runtime::spawn_blocking(move || walker::scan(&canonical, &scan_flag))
-            .await
-            .map_err(|e| format!("Scan task failed: {e}"))?;
+    let results = tauri::async_runtime::spawn_blocking(move || {
+        walker::scan(&canonical, &scan_flag, |path| {
+            let _ = progress_channel.send(ScanEvent::Progress {
+                current_path: path.to_string_lossy().into_owned(),
+            });
+        })
+    })
+    .await
+    .map_err(|e| format!("Scan task failed: {e}"))?;
 
     if flag.load(Ordering::Acquire) {
         if let Err(e) = on_event.send(ScanEvent::Cancelled) {
