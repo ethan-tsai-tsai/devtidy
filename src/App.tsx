@@ -2,9 +2,10 @@ import { Component, useEffect, useMemo, useState, type ReactNode } from "react"
 import { homeDir } from "@tauri-apps/api/path"
 import { open } from "@tauri-apps/plugin-dialog"
 import { invoke } from "@tauri-apps/api/core"
-import { FolderSearch, Loader2, XCircle, AlertTriangle, Home, ShieldAlert, X } from "lucide-react"
+import { FolderSearch, Loader2, XCircle, AlertTriangle, Home, ShieldAlert, X, Download, RefreshCw } from "lucide-react"
 import { Toaster } from "sonner"
 import { ThemeProvider, useTheme } from "@/hooks/use-theme"
+import { useUpdater } from "@/hooks/use-updater"
 import { useScan } from "@/hooks/use-scan"
 import { AppShell } from "@/components/app-shell"
 import { StatCards } from "@/components/dashboard/stat-cards"
@@ -49,6 +50,55 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     }
     return this.props.children
   }
+}
+
+function UpdateBanner() {
+  const { status, version, downloaded, total, installUpdate } = useUpdater()
+
+  if (status === "idle" || status === "checking") return null
+
+  if (status === "available") {
+    return (
+      <div className="flex items-center gap-3 rounded-lg border border-blue-500/30 bg-blue-500/10 px-4 py-3 text-sm">
+        <Download className="size-4 shrink-0 text-blue-500" />
+        <div className="flex-1">
+          <span className="font-medium text-blue-700 dark:text-blue-400">
+            Update available — v{version}
+          </span>
+          <span className="ml-2 text-xs text-muted-foreground">Restart to install</span>
+        </div>
+        <button
+          onClick={() => void installUpdate()}
+          className="rounded-sm text-xs font-medium text-blue-700 underline underline-offset-2 opacity-80 hover:opacity-100 dark:text-blue-400"
+        >
+          Install &amp; Restart
+        </button>
+      </div>
+    )
+  }
+
+  if (status === "downloading") {
+    const percent = total ? Math.round((downloaded / total) * 100) : null
+    return (
+      <div className="flex items-center gap-3 rounded-lg border border-blue-500/30 bg-blue-500/10 px-4 py-3 text-sm">
+        <Loader2 className="size-4 shrink-0 animate-spin text-blue-500" />
+        <span className="text-blue-700 dark:text-blue-400">
+          Downloading update{percent !== null ? ` — ${percent}%` : "…"}
+        </span>
+      </div>
+    )
+  }
+
+  if (status === "error") {
+    return (
+      <div className="flex items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm">
+        <RefreshCw className="size-4 shrink-0 text-destructive" />
+        <span className="flex-1 text-destructive">Update check failed</span>
+      </div>
+    )
+  }
+
+  return null
 }
 
 function DiskAccessBanner() {
@@ -120,6 +170,7 @@ function ScanPage() {
 
   return (
     <div className="space-y-6">
+      <UpdateBanner />
       <DiskAccessBanner />
       <div className="flex items-center justify-between">
         <div>
