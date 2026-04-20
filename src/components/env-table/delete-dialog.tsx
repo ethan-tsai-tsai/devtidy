@@ -62,7 +62,7 @@ export function DeleteDialog({ entry, onDeleted }: DeleteDialogProps) {
             </div>
             <div className="flex justify-between gap-4">
               <dt className="shrink-0 text-muted-foreground">Path</dt>
-              <dd className="truncate font-mono">{entry.path}</dd>
+              <dd className="min-w-0 truncate font-mono">{entry.path}</dd>
             </div>
           </dl>
         </div>
