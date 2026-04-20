@@ -40,7 +40,15 @@ export function useBatchDeleteEnv(onDeleted: (paths: string[]) => void) {
       try {
         const deleted = await invoke<string[]>("delete_envs", { paths })
         setState({ isDeleting: false, error: null })
-        toast.success(`Moved ${deleted.length} item${deleted.length > 1 ? "s" : ""} to trash`)
+        const failedCount = paths.length - deleted.length
+        if (failedCount > 0) {
+          toast.warning(
+            `Moved ${deleted.length} item${deleted.length !== 1 ? "s" : ""} to trash`,
+            { description: `${failedCount} item${failedCount !== 1 ? "s" : ""} could not be deleted (check permissions)` }
+          )
+        } else {
+          toast.success(`Moved ${deleted.length} item${deleted.length !== 1 ? "s" : ""} to trash`)
+        }
         onDeleted(deleted)
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : String(err)

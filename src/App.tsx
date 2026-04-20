@@ -93,16 +93,21 @@ function ScanPage() {
   )
 
   const handleScanFolder = async () => {
-    const selected = await open({
-      directory: true,
-      title: "Select folder to scan",
-    })
-    if (selected) void startScan(selected)
+    try {
+      const selected = await open({ directory: true, title: "Select folder to scan" })
+      if (selected) void startScan(selected)
+    } catch {
+      // Dialog was dismissed or failed — no action needed
+    }
   }
 
   const handleScanHome = async () => {
-    const home = await homeDir()
-    void startScan(home)
+    try {
+      const home = await homeDir()
+      void startScan(home)
+    } catch {
+      // homeDir() unavailable — unlikely but safe to ignore
+    }
   }
 
   return (
