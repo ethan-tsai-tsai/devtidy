@@ -41,6 +41,7 @@ pub fn run() {
             commands::permissions::check_full_disk_access,
             commands::permissions::open_full_disk_access_settings,
             commands::shell::open_in_terminal,
+            commands::export::write_export_file,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

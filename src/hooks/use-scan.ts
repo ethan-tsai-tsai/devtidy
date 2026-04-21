@@ -8,7 +8,9 @@ interface ScanState {
   status: ScanStatus
   results: EnvEntry[]
   durationMs: number | null
+  skippedCount: number
   error: string | null
+  errorKind: "permission" | "not_found" | "unknown" | null
   currentPath: string | null
 }
 
@@ -16,7 +18,9 @@ const INITIAL_STATE: ScanState = {
   status: "idle",
   results: [],
   durationMs: null,
+  skippedCount: 0,
   error: null,
+  errorKind: null,
   currentPath: null,
 }
 
@@ -35,7 +39,9 @@ export function useScan() {
             status: "completed",
             results: cache.results,
             durationMs: cache.durationMs,
+            skippedCount: 0,
             error: null,
+            errorKind: null,
             currentPath: null,
           })
         }
@@ -50,7 +56,7 @@ export function useScan() {
     scanningRef.current = true
     setScanRoot(root)
 
-    setState({ status: "scanning", results: [], durationMs: null, error: null, currentPath: null })
+    setState({ status: "scanning", results: [], durationMs: null, skippedCount: 0, error: null, errorKind: null, currentPath: null })
 
     const onEvent = new Channel<ScanEvent>()
     onEvent.onmessage = (event) => {
@@ -60,7 +66,9 @@ export function useScan() {
             status: "completed",
             results: event.data.results,
             durationMs: event.data.durationMs,
+            skippedCount: event.data.skippedCount,
             error: null,
+            errorKind: null,
             currentPath: null,
           })
           scanningRef.current = false
@@ -77,6 +85,7 @@ export function useScan() {
             ...prev,
             status: "error",
             error: event.data.message,
+            errorKind: event.data.kind,
             currentPath: null,
           }))
           scanningRef.current = false
@@ -91,7 +100,7 @@ export function useScan() {
       await invoke("scan_envs", { root, onEvent })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err)
-      setState((prev) => ({ ...prev, status: "error", error: message }))
+      setState((prev) => ({ ...prev, status: "error", error: message, errorKind: "unknown" }))
       scanningRef.current = false
     }
   }, [])

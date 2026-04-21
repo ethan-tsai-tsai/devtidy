@@ -116,6 +116,17 @@
   },
   "errors": {
     "somethingWentWrong": "Something went wrong",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "scanFailed": "Scan failed",
+    "scanPermission": "Permission denied — some directories could not be accessed",
+    "scanNotFound": "Path not found or no longer exists",
+    "skippedDirs": "{{count}} director(ies) were skipped due to permission restrictions. Results may be incomplete."
+  },
+  "export": {
+    "button": "Export",
+    "csv": "Export as CSV",
+    "json": "Export as JSON",
+    "success": "Report exported as {{format}}",
+    "error": "Export failed: {{error}}"
   }
 }

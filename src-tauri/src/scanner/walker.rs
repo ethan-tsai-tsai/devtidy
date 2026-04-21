@@ -40,20 +40,35 @@ const SKIP_DIRS: &[&str] = &[
 /// Directories that are environments themselves — do not recurse into them.
 const ENV_DIRS: &[&str] = &["node_modules", ".venv", "venv", "__pypackages__"];
 
+/// Result of a scan operation.
+pub struct ScanResult {
+    pub entries: Vec<EnvEntry>,
+    /// Directories skipped due to permission or I/O errors during the walk.
+    pub skipped_count: u64,
+}
+
 /// Scans a root directory for virtual environments.
 ///
 /// `on_progress` is called with the current directory path during the walk phase,
 /// throttled to at most once per 100 ms to avoid IPC flooding.
+///
+/// Returns a [`ScanResult`] containing found environments and a count of
+/// directories that could not be read (e.g., permission denied).
 #[must_use]
 pub fn scan(
     root: &Path,
     cancel: &AtomicBool,
     on_progress: impl Fn(&Path) + Send,
     config: &ScanConfig,
-) -> Vec<EnvEntry> {
+) -> ScanResult {
+    use std::sync::atomic::AtomicU64;
+    use std::sync::Arc;
+
     const PROGRESS_INTERVAL: Duration = Duration::from_millis(100);
     let mut last_progress = Instant::now() - PROGRESS_INTERVAL;
     let extra: Vec<String> = config.extra_excludes.clone();
+    let skipped = Arc::new(AtomicU64::new(0));
+    let skipped_walk = skipped.clone();
 
     // Phase 1: walk the tree, detect env type once per directory
     let mut walker = WalkDir::new(root)
@@ -74,6 +89,12 @@ pub fn scan(
             if ENV_DIRS.contains(&parent_name.as_ref()) {
                 children.clear();
                 return;
+            }
+
+            // Count entries that failed to read (permission errors, etc.)
+            let errors = children.iter().filter(|e| e.is_err()).count() as u64;
+            if errors > 0 {
+                skipped_walk.fetch_add(errors, Ordering::Relaxed);
             }
 
             children.retain(|entry| {
@@ -110,11 +131,11 @@ pub fn scan(
         .collect();
 
     if cancel.load(Ordering::Acquire) {
-        return Vec::new();
+        return ScanResult { entries: Vec::new(), skipped_count: 0 };
     }
 
     // Phase 2: enrich each detected env with size, metadata, project info (parallel)
-    detected
+    let entries = detected
         .par_iter()
         .filter_map(|(path, env_type)| {
             if cancel.load(Ordering::Acquire) {
@@ -134,7 +155,12 @@ pub fn scan(
                 has_project_file,
             })
         })
-        .collect()
+        .collect();
+
+    ScanResult {
+        entries,
+        skipped_count: skipped.load(Ordering::Relaxed),
+    }
 }
 
 fn get_last_modified(path: &Path) -> DateTime<Utc> {
@@ -178,9 +204,9 @@ mod tests {
         let tmp = setup_test_tree();
         let cancel = AtomicBool::new(false);
 
-        let results = scan(tmp.path(), &cancel, |_| {}, &ScanConfig::default());
+        let result = scan(tmp.path(), &cancel, |_| {}, &ScanConfig::default());
 
-        assert_eq!(results.len(), 3);
+        assert_eq!(result.entries.len(), 3);
     }
 
     #[test]
@@ -188,8 +214,8 @@ mod tests {
         let tmp = setup_test_tree();
         let cancel = AtomicBool::new(false);
 
-        let results = scan(tmp.path(), &cancel, |_| {}, &ScanConfig::default());
-        let orphans: Vec<_> = results.iter().filter(|e| !e.has_project_file).collect();
+        let result = scan(tmp.path(), &cancel, |_| {}, &ScanConfig::default());
+        let orphans: Vec<_> = result.entries.iter().filter(|e| !e.has_project_file).collect();
 
         assert_eq!(orphans.len(), 1);
         assert!(orphans[0].path.to_string_lossy().contains("old-stuff"));
@@ -200,9 +226,9 @@ mod tests {
         let tmp = setup_test_tree();
         let cancel = AtomicBool::new(true);
 
-        let results = scan(tmp.path(), &cancel, |_| {}, &ScanConfig::default());
+        let result = scan(tmp.path(), &cancel, |_| {}, &ScanConfig::default());
 
-        assert!(results.is_empty());
+        assert!(result.entries.is_empty());
     }
 
     #[test]
@@ -216,10 +242,10 @@ mod tests {
         fs::write(proj.join("package.json"), "{}\n").unwrap();
 
         let cancel = AtomicBool::new(false);
-        let results = scan(root, &cancel, |_| {}, &ScanConfig::default());
+        let result = scan(root, &cancel, |_| {}, &ScanConfig::default());
 
         // Should only find the top-level node_modules, not the nested one
-        let nm_results: Vec<_> = results
+        let nm_results: Vec<_> = result.entries
             .iter()
             .filter(|e| e.env_type == EnvType::NodeModules)
             .collect();
@@ -250,8 +276,8 @@ mod tests {
         fs::create_dir_all(&git_nm).unwrap();
 
         let cancel = AtomicBool::new(false);
-        let results = scan(tmp.path(), &cancel, |_| {}, &ScanConfig::default());
+        let result = scan(tmp.path(), &cancel, |_| {}, &ScanConfig::default());
 
-        assert!(results.is_empty());
+        assert!(result.entries.is_empty());
     }
 }

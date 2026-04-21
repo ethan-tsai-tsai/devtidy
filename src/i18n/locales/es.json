@@ -116,6 +116,17 @@
   },
   "errors": {
     "somethingWentWrong": "Algo salió mal",
-    "tryAgain": "Intentar de nuevo"
+    "tryAgain": "Intentar de nuevo",
+    "scanFailed": "Error al escanear",
+    "scanPermission": "Permiso denegado — no se pudo acceder a algunos directorios",
+    "scanNotFound": "La ruta no existe o ya no está disponible",
+    "skippedDirs": "Se omitieron {{count}} directorio(s) por restricciones de permisos. Los resultados pueden estar incompletos."
+  },
+  "export": {
+    "button": "Exportar",
+    "csv": "Exportar como CSV",
+    "json": "Exportar como JSON",
+    "success": "Informe exportado como {{format}}",
+    "error": "Error al exportar: {{error}}"
   }
 }
