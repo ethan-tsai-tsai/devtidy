@@ -9,8 +9,7 @@
     <img src="https://img.shields.io/github/v/release/ethan-tsai-tsai/devtidy" alt="Latest Release" />
   </p>
 
-  <!-- Replace with actual screenshot once available -->
-  <!-- <img src="docs/screenshot.png" alt="DevTidy screenshot" width="860" /> -->
+  <img src="docs/screenshot.png" alt="DevTidy screenshot" width="720" />
 </div>
 
 ---
