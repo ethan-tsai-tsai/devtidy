@@ -55,7 +55,11 @@
       "ascending": "（오름차순）",
       "descending": "（내림차순）"
     },
-    "orphan": "고아"
+    "orphan": "고아",
+    "actions": {
+      "openInTerminal": "터미널에서 열기",
+      "terminalError": "터미널을 열 수 없습니다: {{error}}"
+    }
   },
   "deleteDialog": {
     "title": "휴지통으로 이동",

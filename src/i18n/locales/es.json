@@ -55,7 +55,11 @@
       "ascending": "(ascendente)",
       "descending": "(descendente)"
     },
-    "orphan": "Huérfano"
+    "orphan": "Huérfano",
+    "actions": {
+      "openInTerminal": "Abrir en terminal",
+      "terminalError": "No se pudo abrir el terminal: {{error}}"
+    }
   },
   "deleteDialog": {
     "title": "Mover a la papelera",

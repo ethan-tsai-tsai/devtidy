@@ -55,7 +55,11 @@
       "ascending": "（升序）",
       "descending": "（降序）"
     },
-    "orphan": "孤立"
+    "orphan": "孤立",
+    "actions": {
+      "openInTerminal": "在终端中打开",
+      "terminalError": "无法打开终端：{{error}}"
+    }
   },
   "deleteDialog": {
     "title": "移至回收站",

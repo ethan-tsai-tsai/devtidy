@@ -3,3 +3,4 @@ pub mod delete;
 pub mod permissions;
 pub mod scan;
 pub mod settings;
+pub mod shell;
