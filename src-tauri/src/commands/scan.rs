@@ -14,6 +14,14 @@ use crate::db::DbState;
 use crate::scanner::walker::{self, ScanConfig};
 use crate::scanner::EnvEntry;
 
+fn classify_io_error(e: &std::io::Error) -> &'static str {
+    match e.kind() {
+        std::io::ErrorKind::PermissionDenied => "permission",
+        std::io::ErrorKind::NotFound => "not_found",
+        _ => "unknown",
+    }
+}
+
 /// Shared state for scan cancellation, managed per-invocation.
 pub struct ScanState {
     cancel: Mutex<Arc<AtomicBool>>,
@@ -36,13 +44,16 @@ pub enum ScanEvent {
     Completed {
         results: Vec<EnvEntry>,
         duration_ms: u64,
+        /// Number of directories skipped due to permission or I/O errors.
+        skipped_count: u64,
     },
     #[serde(rename = "cancelled")]
     Cancelled,
     #[serde(rename_all = "camelCase")]
     Progress { current_path: String },
     #[serde(rename_all = "camelCase")]
-    Error { message: String },
+    /// `kind`: "permission" | "not_found" | "unknown"
+    Error { message: String, kind: String },
 }
 
 #[tauri::command]
@@ -52,18 +63,28 @@ pub async fn scan_envs(
     state: State<'_, ScanState>,
     db: State<'_, DbState>,
 ) -> Result<(), String> {
-    let canonical = PathBuf::from(&root)
-        .canonicalize()
-        .map_err(|e| format!("Failed to resolve path: {e}"))?;
+    let canonical = PathBuf::from(&root).canonicalize().map_err(|e| {
+        let kind = classify_io_error(&e);
+        let _ = on_event.send(ScanEvent::Error {
+            message: format!("Cannot access path: {e}"),
+            kind: kind.to_string(),
+        });
+        format!("Failed to resolve path: {e}")
+    })?;
 
     if !canonical.is_dir() {
         let _ = on_event.send(ScanEvent::Error {
             message: format!("Path is not a directory: {root}"),
+            kind: "not_found".to_string(),
         });
         return Err(format!("Path is not a directory: {root}"));
     }
 
     if canonical.parent().is_none() {
+        let _ = on_event.send(ScanEvent::Error {
+            message: "Refusing to scan filesystem root".to_string(),
+            kind: "unknown".to_string(),
+        });
         return Err("Refusing to scan filesystem root".to_string());
     }
 
@@ -100,7 +121,7 @@ pub async fn scan_envs(
     let progress_channel = on_event.clone();
     let start = Instant::now();
 
-    let results = tauri::async_runtime::spawn_blocking(move || {
+    let scan_result = tauri::async_runtime::spawn_blocking(move || {
         walker::scan(&canonical, &scan_flag, |path| {
             let _ = progress_channel.send(ScanEvent::Progress {
                 current_path: path.to_string_lossy().into_owned(),
@@ -118,6 +139,8 @@ pub async fn scan_envs(
     }
 
     let duration_ms = start.elapsed().as_millis() as u64;
+    let skipped_count = scan_result.skipped_count;
+    let results = scan_result.entries;
 
     // Persist scan results to cache.
     let root_str = root.clone();
@@ -133,7 +156,7 @@ pub async fn scan_envs(
         }
     }
 
-    if let Err(e) = on_event.send(ScanEvent::Completed { results, duration_ms }) {
+    if let Err(e) = on_event.send(ScanEvent::Completed { results, duration_ms, skipped_count }) {
         warn!("Failed to send completed event: {e}");
     }
 

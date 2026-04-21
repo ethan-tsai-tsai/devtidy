@@ -1,4 +1,5 @@
 import { HardDrive, ScanSearch, Settings } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 
@@ -11,6 +12,8 @@ interface AppShellProps {
 }
 
 export function AppShell({ children, tab, onTabChange }: AppShellProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex h-screen flex-col bg-background text-foreground">
       <header className="flex h-12 shrink-0 items-center justify-between border-b px-4">
@@ -27,7 +30,7 @@ export function AppShell({ children, tab, onTabChange }: AppShellProps) {
               onClick={() => onTabChange("scan")}
             >
               <ScanSearch className="size-3.5" />
-              Scan
+              {t("nav.scan")}
             </Button>
             <Button
               variant={tab === "settings" ? "secondary" : "ghost"}
@@ -36,7 +39,7 @@ export function AppShell({ children, tab, onTabChange }: AppShellProps) {
               onClick={() => onTabChange("settings")}
             >
               <Settings className="size-3.5" />
-              Settings
+              {t("nav.settings")}
             </Button>
           </nav>
         </div>

@@ -1,0 +1,132 @@
+{
+  "nav": {
+    "scan": "スキャン",
+    "settings": "設定"
+  },
+  "update": {
+    "available": "アップデートあり — v{{version}}",
+    "restartHint": "再起動してインストール",
+    "installRestart": "インストールして再起動",
+    "downloading": "アップデートをダウンロード中 — {{percent}}%",
+    "downloadingNoPercent": "アップデートをダウンロード中…",
+    "checkFailed": "アップデートの確認に失敗しました"
+  },
+  "diskAccess": {
+    "title": "フルディスクアクセスが必要です",
+    "description": "一部のディレクトリがスキップされる場合があります。「システム設定 → プライバシーとセキュリティ → フルディスクアクセス」でアクセスを許可してください。",
+    "openSettings": "設定を開く"
+  },
+  "scan": {
+    "title": "仮想環境",
+    "summary": "{{count}} 件見つかりました · 合計 {{size}}",
+    "summaryWithDuration": "{{count}} 件見つかりました · 合計 {{size}} · {{duration}}s",
+    "summaryWithRoot": "{{count}} 件見つかりました · 合計 {{size}} · {{duration}}s · {{root}}",
+    "scanFolder": "フォルダをスキャン",
+    "scanHome": "ホームをスキャン",
+    "cancel": "キャンセル",
+    "scanning": "仮想環境をスキャン中...",
+    "emptyTitle": "スキャン結果なし",
+    "emptyDescription": "スキャンをクリックして仮想環境を検索してください。"
+  },
+  "table": {
+    "categories": {
+      "all": "すべて",
+      "python": "Python",
+      "node": "Node.js",
+      "orphan": "孤立"
+    },
+    "sizeFilters": {
+      "all": "サイズ制限なし",
+      "100mb": "> 100 MB",
+      "500mb": "> 500 MB",
+      "1gb": "> 1 GB"
+    },
+    "search": "環境を検索...",
+    "selected": "{{count}} 件選択中",
+    "clearSelection": "選択をクリア",
+    "noResults": "環境が見つかりませんでした。",
+    "footer": "{{count}} 件の環境が見つかりました",
+    "columns": {
+      "type": "タイプ",
+      "project": "プロジェクト",
+      "path": "パス",
+      "size": "サイズ",
+      "lastModified": "最終更新",
+      "ascending": "（昇順）",
+      "descending": "（降順）"
+    },
+    "orphan": "孤立",
+    "actions": {
+      "openInTerminal": "ターミナルで開く",
+      "terminalError": "ターミナルを開けませんでした：{{error}}"
+    }
+  },
+  "deleteDialog": {
+    "title": "ゴミ箱に移動",
+    "description": "この環境をシステムのゴミ箱に移動します。必要に応じてゴミ箱から復元できます。",
+    "labelType": "タイプ",
+    "labelSize": "サイズ",
+    "labelPath": "パス",
+    "cancel": "キャンセル",
+    "moving": "移動中...",
+    "confirm": "ゴミ箱に移動"
+  },
+  "batchDeleteDialog": {
+    "trigger": "選択した {{count}} 件を削除",
+    "title": "{{count}} 件の環境をゴミ箱に移動",
+    "description": "選択した環境をシステムのゴミ箱に移動します。必要に応じてゴミ箱から復元できます。",
+    "totalSpaceFreed": "解放される合計容量",
+    "cancel": "キャンセル",
+    "moving": "移動中...",
+    "confirm": "ゴミ箱に移動"
+  },
+  "stats": {
+    "totalEnvironments": "環境の総数",
+    "totalEnvironmentsDetail": "{{python}} Python・{{node}} Node.js",
+    "totalSize": "合計使用容量",
+    "orphans": "孤立環境",
+    "orphansDetail": "プロジェクトファイルが見つかりません",
+    "largest": "最大環境"
+  },
+  "settings": {
+    "loading": "設定を読み込み中...",
+    "title": "設定",
+    "subtitle": "スキャン動作を設定",
+    "language": {
+      "title": "言語",
+      "description": "インターフェースの表示言語を選択してください。"
+    },
+    "scanDepth": {
+      "title": "最大スキャン深度",
+      "description": "ディレクトリの再帰的な深さ。0 は無制限を意味します。",
+      "noLimit": "制限なし",
+      "levels_one": "{{count}} 階層",
+      "levels_other": "{{count}} 階層"
+    },
+    "excludes": {
+      "title": "追加除外ディレクトリ",
+      "description": "スキャン時にスキップするディレクトリ名（.git、Library などの組み込み除外に加えて）。",
+      "placeholder": "例: dist、.next",
+      "add": "追加",
+      "removeAriaLabel": "{{name}} を削除"
+    },
+    "save": "保存",
+    "saving": "保存中...",
+    "reset": "リセット"
+  },
+  "errors": {
+    "somethingWentWrong": "エラーが発生しました",
+    "tryAgain": "もう一度試す",
+    "scanFailed": "スキャンに失敗しました",
+    "scanPermission": "アクセス権限がありません — 一部のディレクトリにアクセスできませんでした",
+    "scanNotFound": "パスが存在しないか、削除されています",
+    "skippedDirs": "権限の制限により {{count}} 個のディレクトリをスキップしました。結果が不完全な場合があります。"
+  },
+  "export": {
+    "button": "エクスポート",
+    "csv": "CSVとしてエクスポート",
+    "json": "JSONとしてエクスポート",
+    "success": "レポートを {{format}} でエクスポートしました",
+    "error": "エクスポートに失敗しました：{{error}}"
+  }
+}

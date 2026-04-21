@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "DevTidy",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "identifier": "com.devtidy.desktop",
   "build": {
     "frontendDist": "../dist",
@@ -28,6 +28,7 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "createUpdaterArtifacts": true,
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -42,6 +43,14 @@
       "minimumSystemVersion": "11.0",
       "signingIdentity": null,
       "entitlements": null
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEM3NUE5OTM3ODc5MDA2QTIKUldTaUJwQ0hONWxheHh4VWl0K29pcFNQMEw4VFV0dm14bi9MT3R1M2w1VURKMjE4ZUoreDNKNDEK",
+      "endpoints": [
+        "https://github.com/ethan-tsai-tsai/devtidy/releases/latest/download/latest.json"
+      ]
     }
   }
 }

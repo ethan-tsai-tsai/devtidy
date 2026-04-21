@@ -1,0 +1,132 @@
+{
+  "nav": {
+    "scan": "掃描",
+    "settings": "設定"
+  },
+  "update": {
+    "available": "有新版本 — v{{version}}",
+    "restartHint": "重新啟動以安裝",
+    "installRestart": "安裝並重新啟動",
+    "downloading": "正在下載更新 — {{percent}}%",
+    "downloadingNoPercent": "正在下載更新…",
+    "checkFailed": "更新檢查失敗"
+  },
+  "diskAccess": {
+    "title": "需要完整磁碟存取權限",
+    "description": "部分目錄可能會被略過。請至「系統設定 → 隱私權與安全性 → 完整磁碟存取」授予權限。",
+    "openSettings": "開啟設定"
+  },
+  "scan": {
+    "title": "虛擬環境",
+    "summary": "找到 {{count}} 個 · 共 {{size}}",
+    "summaryWithDuration": "找到 {{count}} 個 · 共 {{size}} · {{duration}}s",
+    "summaryWithRoot": "找到 {{count}} 個 · 共 {{size}} · {{duration}}s · {{root}}",
+    "scanFolder": "掃描資料夾",
+    "scanHome": "掃描家目錄",
+    "cancel": "取消",
+    "scanning": "正在掃描虛擬環境...",
+    "emptyTitle": "尚無掃描結果",
+    "emptyDescription": "點擊掃描按鈕來尋找此機器上的虛擬環境。"
+  },
+  "table": {
+    "categories": {
+      "all": "全部",
+      "python": "Python",
+      "node": "Node.js",
+      "orphan": "孤兒"
+    },
+    "sizeFilters": {
+      "all": "不限大小",
+      "100mb": "> 100 MB",
+      "500mb": "> 500 MB",
+      "1gb": "> 1 GB"
+    },
+    "search": "搜尋環境...",
+    "selected": "已選取 {{count}} 個",
+    "clearSelection": "清除選取",
+    "noResults": "找不到符合的環境。",
+    "footer": "找到 {{count}} 個環境",
+    "columns": {
+      "type": "類型",
+      "project": "專案",
+      "path": "路徑",
+      "size": "大小",
+      "lastModified": "最後修改",
+      "ascending": "（升冪）",
+      "descending": "（降冪）"
+    },
+    "orphan": "孤兒",
+    "actions": {
+      "openInTerminal": "在終端機中開啟",
+      "terminalError": "無法開啟終端機：{{error}}"
+    }
+  },
+  "deleteDialog": {
+    "title": "移至垃圾桶",
+    "description": "此動作將把以下環境移至系統垃圾桶，您可視需要從垃圾桶還原。",
+    "labelType": "類型",
+    "labelSize": "大小",
+    "labelPath": "路徑",
+    "cancel": "取消",
+    "moving": "移動中...",
+    "confirm": "移至垃圾桶"
+  },
+  "batchDeleteDialog": {
+    "trigger": "刪除已選取的 {{count}} 個",
+    "title": "將 {{count}} 個環境移至垃圾桶",
+    "description": "此動作將把選取的環境移至系統垃圾桶，您可視需要從垃圾桶還原。",
+    "totalSpaceFreed": "釋放空間總計",
+    "cancel": "取消",
+    "moving": "移動中...",
+    "confirm": "移至垃圾桶"
+  },
+  "stats": {
+    "totalEnvironments": "環境總數",
+    "totalEnvironmentsDetail": "{{python}} Python、{{node}} Node.js",
+    "totalSize": "總佔用空間",
+    "orphans": "孤兒環境",
+    "orphansDetail": "找不到專案設定檔",
+    "largest": "最大環境"
+  },
+  "settings": {
+    "loading": "載入設定中...",
+    "title": "設定",
+    "subtitle": "設定掃描行為",
+    "language": {
+      "title": "語言",
+      "description": "選擇介面顯示語言。"
+    },
+    "scanDepth": {
+      "title": "最大掃描深度",
+      "description": "遞迴進入目錄的層數，0 表示不限深度。",
+      "noLimit": "不限深度",
+      "levels_one": "{{count}} 層",
+      "levels_other": "{{count}} 層"
+    },
+    "excludes": {
+      "title": "額外排除目錄",
+      "description": "掃描時要跳過的目錄名稱（除了內建的 .git、Library 等）。",
+      "placeholder": "例如 dist、.next",
+      "add": "新增",
+      "removeAriaLabel": "移除 {{name}}"
+    },
+    "save": "儲存",
+    "saving": "儲存中...",
+    "reset": "重設"
+  },
+  "errors": {
+    "somethingWentWrong": "發生錯誤",
+    "tryAgain": "再試一次",
+    "scanFailed": "掃描失敗",
+    "scanPermission": "權限不足 — 部分目錄無法存取",
+    "scanNotFound": "路徑不存在或已被移除",
+    "skippedDirs": "因權限限制，已略過 {{count}} 個目錄，結果可能不完整。"
+  },
+  "export": {
+    "button": "匯出",
+    "csv": "匯出為 CSV",
+    "json": "匯出為 JSON",
+    "success": "報告已匯出為 {{format}}",
+    "error": "匯出失敗：{{error}}"
+  }
+}

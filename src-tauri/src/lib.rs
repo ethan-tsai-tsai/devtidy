@@ -7,6 +7,7 @@ use tauri::Manager;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
         .manage(commands::scan::ScanState::new())
         .setup(|app| {
@@ -39,6 +40,8 @@ pub fn run() {
             commands::settings::save_settings,
             commands::permissions::check_full_disk_access,
             commands::permissions::open_full_disk_access_settings,
+            commands::shell::open_in_terminal,
+            commands::export::write_export_file,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

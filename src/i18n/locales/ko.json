@@ -1,0 +1,132 @@
+{
+  "nav": {
+    "scan": "스캔",
+    "settings": "설정"
+  },
+  "update": {
+    "available": "업데이트 가능 — v{{version}}",
+    "restartHint": "설치하려면 재시작",
+    "installRestart": "설치 후 재시작",
+    "downloading": "업데이트 다운로드 중 — {{percent}}%",
+    "downloadingNoPercent": "업데이트 다운로드 중…",
+    "checkFailed": "업데이트 확인 실패"
+  },
+  "diskAccess": {
+    "title": "전체 디스크 접근 권한 필요",
+    "description": "일부 디렉토리가 건너뛰어질 수 있습니다. 「시스템 설정 → 개인 정보 보호 및 보안 → 전체 디스크 접근」에서 권한을 부여하세요.",
+    "openSettings": "설정 열기"
+  },
+  "scan": {
+    "title": "가상 환경",
+    "summary": "{{count}}개 발견 · 총 {{size}}",
+    "summaryWithDuration": "{{count}}개 발견 · 총 {{size}} · {{duration}}s",
+    "summaryWithRoot": "{{count}}개 발견 · 총 {{size}} · {{duration}}s · {{root}}",
+    "scanFolder": "폴더 스캔",
+    "scanHome": "홈 스캔",
+    "cancel": "취소",
+    "scanning": "가상 환경 스캔 중...",
+    "emptyTitle": "스캔 결과 없음",
+    "emptyDescription": "스캔 버튼을 클릭하여 이 기기의 가상 환경을 찾아보세요."
+  },
+  "table": {
+    "categories": {
+      "all": "전체",
+      "python": "Python",
+      "node": "Node.js",
+      "orphan": "고아"
+    },
+    "sizeFilters": {
+      "all": "크기 제한 없음",
+      "100mb": "> 100 MB",
+      "500mb": "> 500 MB",
+      "1gb": "> 1 GB"
+    },
+    "search": "환경 검색...",
+    "selected": "{{count}}개 선택됨",
+    "clearSelection": "선택 해제",
+    "noResults": "환경을 찾을 수 없습니다.",
+    "footer": "{{count}}개 환경 발견",
+    "columns": {
+      "type": "유형",
+      "project": "프로젝트",
+      "path": "경로",
+      "size": "크기",
+      "lastModified": "최종 수정",
+      "ascending": "（오름차순）",
+      "descending": "（내림차순）"
+    },
+    "orphan": "고아",
+    "actions": {
+      "openInTerminal": "터미널에서 열기",
+      "terminalError": "터미널을 열 수 없습니다: {{error}}"
+    }
+  },
+  "deleteDialog": {
+    "title": "휴지통으로 이동",
+    "description": "이 환경을 시스템 휴지통으로 이동합니다. 필요한 경우 휴지통에서 복원할 수 있습니다.",
+    "labelType": "유형",
+    "labelSize": "크기",
+    "labelPath": "경로",
+    "cancel": "취소",
+    "moving": "이동 중...",
+    "confirm": "휴지통으로 이동"
+  },
+  "batchDeleteDialog": {
+    "trigger": "선택한 {{count}}개 삭제",
+    "title": "{{count}}개 환경을 휴지통으로 이동",
+    "description": "선택한 환경을 시스템 휴지통으로 이동합니다. 필요한 경우 휴지통에서 복원할 수 있습니다.",
+    "totalSpaceFreed": "총 확보 공간",
+    "cancel": "취소",
+    "moving": "이동 중...",
+    "confirm": "휴지통으로 이동"
+  },
+  "stats": {
+    "totalEnvironments": "환경 총수",
+    "totalEnvironmentsDetail": "{{python}} Python, {{node}} Node.js",
+    "totalSize": "총 사용 공간",
+    "orphans": "고아 환경",
+    "orphansDetail": "프로젝트 파일을 찾을 수 없음",
+    "largest": "최대 환경"
+  },
+  "settings": {
+    "loading": "설정 로딩 중...",
+    "title": "설정",
+    "subtitle": "스캔 동작 설정",
+    "language": {
+      "title": "언어",
+      "description": "인터페이스 표시 언어를 선택하세요."
+    },
+    "scanDepth": {
+      "title": "최대 스캔 깊이",
+      "description": "디렉토리 재귀 깊이. 0은 무제한을 의미합니다.",
+      "noLimit": "제한 없음",
+      "levels_one": "{{count}} 단계",
+      "levels_other": "{{count}} 단계"
+    },
+    "excludes": {
+      "title": "추가 제외 디렉토리",
+      "description": "스캔 시 건너뛸 디렉토리 이름（.git, Library 등 기본 제외 항목 외에 추가）.",
+      "placeholder": "예: dist, .next",
+      "add": "추가",
+      "removeAriaLabel": "{{name}} 제거"
+    },
+    "save": "저장",
+    "saving": "저장 중...",
+    "reset": "초기화"
+  },
+  "errors": {
+    "somethingWentWrong": "오류가 발생했습니다",
+    "tryAgain": "다시 시도",
+    "scanFailed": "스캔에 실패했습니다",
+    "scanPermission": "권한 없음 — 일부 디렉토리에 접근할 수 없습니다",
+    "scanNotFound": "경로가 존재하지 않거나 삭제되었습니다",
+    "skippedDirs": "권한 제한으로 인해 {{count}}개의 디렉토리를 건너뛰었습니다. 결과가 불완전할 수 있습니다."
+  },
+  "export": {
+    "button": "내보내기",
+    "csv": "CSV로 내보내기",
+    "json": "JSON으로 내보내기",
+    "success": "보고서가 {{format}}으로 내보내졌습니다",
+    "error": "내보내기 실패: {{error}}"
+  }
+}

@@ -38,11 +38,16 @@ DevTidy gives you a single visual dashboard for both ecosystems — scan once, s
 - **Dashboard** — stat cards, type distribution chart, and top-10 size ranking
 - **Safe deletion** — moves to system trash (recoverable), with a path-depth guard that prevents accidental deletion of system directories
 - **Batch operations** — select and delete multiple environments in one action
+- **Open in Terminal** — open any environment's directory directly in your system terminal with one click
+- **Export report** — save scan results as CSV or JSON for further analysis or sharing
 - **Orphan detection** — flags environments whose parent project no longer has a config file (`package.json`, `requirements.txt`, `pyproject.toml`, etc.)
 - **Persistent cache** — SQLite-backed results survive app restarts; open the app, see last scan instantly
 - **Configurable** — set scan depth and custom directory exclusion patterns
+- **Permission-aware scanning** — reports skipped directories due to access restrictions instead of silently failing
+- **Internationalisation** — UI available in English, 繁體中文, 简体中文, 日本語, 한국어, and Español
 - **macOS Full Disk Access guidance** — detects missing permissions and opens System Settings in one click
 - **Dark / light theme** — follows system preference, or toggle manually
+- **Auto-update** — checks for new releases on launch via GitHub Releases
 
 ---
 

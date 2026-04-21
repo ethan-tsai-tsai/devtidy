@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Loader2, Trash2 } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -22,6 +23,7 @@ interface BatchDeleteDialogProps {
 
 export function BatchDeleteDialog({ entries, onConfirm, isDeleting }: BatchDeleteDialogProps) {
   const [open, setOpen] = useState(false)
+  const { t } = useTranslation()
 
   const totalBytes = entries.reduce((sum, e) => sum + e.sizeBytes, 0)
 
@@ -38,18 +40,16 @@ export function BatchDeleteDialog({ entries, onConfirm, isDeleting }: BatchDelet
         }
       >
         <Trash2 className="size-3.5" />
-        Delete {entries.length} selected
+        {t("batchDeleteDialog.trigger", { count: entries.length })}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Move {entries.length} environments to Trash</DialogTitle>
-          <DialogDescription>
-            This will move the selected environments to the system trash. You can restore them from your trash if needed.
-          </DialogDescription>
+          <DialogTitle>{t("batchDeleteDialog.title", { count: entries.length })}</DialogTitle>
+          <DialogDescription>{t("batchDeleteDialog.description")}</DialogDescription>
         </DialogHeader>
         <div className="rounded-md border bg-muted/50 p-3 text-xs">
           <div className="mb-2 flex justify-between font-medium">
-            <span>Total space freed</span>
+            <span>{t("batchDeleteDialog.totalSpaceFreed")}</span>
             <span className="tabular-nums">{formatBytes(totalBytes)}</span>
           </div>
           <ul className="max-h-48 space-y-1 overflow-y-auto">
@@ -63,7 +63,7 @@ export function BatchDeleteDialog({ entries, onConfirm, isDeleting }: BatchDelet
         </div>
         <DialogFooter>
           <DialogClose render={<Button variant="outline" disabled={isDeleting} />}>
-            Cancel
+            {t("batchDeleteDialog.cancel")}
           </DialogClose>
           <Button variant="destructive" onClick={handleConfirm} disabled={isDeleting}>
             {isDeleting ? (
@@ -71,7 +71,7 @@ export function BatchDeleteDialog({ entries, onConfirm, isDeleting }: BatchDelet
             ) : (
               <Trash2 className="size-4" />
             )}
-            {isDeleting ? "Moving..." : "Move to Trash"}
+            {isDeleting ? t("batchDeleteDialog.moving") : t("batchDeleteDialog.confirm")}
           </Button>
         </DialogFooter>
       </DialogContent>

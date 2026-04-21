@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "0.1.0"
+version = "0.2.0"
 description = "DevTidy — Virtual environment manager for Python venv and Node.js node_modules"
 authors = ["ethan-tsai-tsai"]
 license = "MIT"
@@ -29,6 +29,7 @@ chrono = { version = "0.4", features = ["serde"] }
 thiserror = "2"
 trash = "5"
 tauri-plugin-dialog = "2.7.0"
+tauri-plugin-updater = "2"
 rusqlite = { version = "0.32", features = ["bundled"] }
 
 [dev-dependencies]
