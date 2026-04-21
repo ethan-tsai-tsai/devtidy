@@ -1,0 +1,117 @@
+{
+  "nav": {
+    "scan": "Escanear",
+    "settings": "Ajustes"
+  },
+  "update": {
+    "available": "Actualización disponible — v{{version}}",
+    "restartHint": "Reiniciar para instalar",
+    "installRestart": "Instalar y reiniciar",
+    "downloading": "Descargando actualización — {{percent}}%",
+    "downloadingNoPercent": "Descargando actualización…",
+    "checkFailed": "Error al verificar actualizaciones"
+  },
+  "diskAccess": {
+    "title": "Se requiere acceso completo al disco",
+    "description": "Algunos directorios pueden omitirse. Concede acceso en Ajustes del Sistema → Privacidad y seguridad → Acceso completo al disco.",
+    "openSettings": "Abrir ajustes"
+  },
+  "scan": {
+    "title": "Entornos virtuales",
+    "summary": "{{count}} encontrados · {{size}} en total",
+    "summaryWithDuration": "{{count}} encontrados · {{size}} en total · {{duration}}s",
+    "summaryWithRoot": "{{count}} encontrados · {{size}} en total · {{duration}}s · {{root}}",
+    "scanFolder": "Escanear carpeta",
+    "scanHome": "Escanear inicio",
+    "cancel": "Cancelar",
+    "scanning": "Escaneando entornos virtuales...",
+    "emptyTitle": "Sin resultados de escaneo",
+    "emptyDescription": "Haz clic en Escanear para encontrar entornos virtuales en este equipo."
+  },
+  "table": {
+    "categories": {
+      "all": "Todos",
+      "python": "Python",
+      "node": "Node.js",
+      "orphan": "Huérfano"
+    },
+    "sizeFilters": {
+      "all": "Cualquier tamaño",
+      "100mb": "> 100 MB",
+      "500mb": "> 500 MB",
+      "1gb": "> 1 GB"
+    },
+    "search": "Buscar entornos...",
+    "selected": "{{count}} seleccionados",
+    "clearSelection": "Limpiar selección",
+    "noResults": "No se encontraron entornos.",
+    "footer": "{{count}} entorno(s) encontrado(s)",
+    "columns": {
+      "type": "Tipo",
+      "project": "Proyecto",
+      "path": "Ruta",
+      "size": "Tamaño",
+      "lastModified": "Última modificación",
+      "ascending": "(ascendente)",
+      "descending": "(descendente)"
+    },
+    "orphan": "Huérfano"
+  },
+  "deleteDialog": {
+    "title": "Mover a la papelera",
+    "description": "Esto moverá el siguiente entorno a la papelera del sistema. Puedes restaurarlo desde la papelera si es necesario.",
+    "labelType": "Tipo",
+    "labelSize": "Tamaño",
+    "labelPath": "Ruta",
+    "cancel": "Cancelar",
+    "moving": "Moviendo...",
+    "confirm": "Mover a la papelera"
+  },
+  "batchDeleteDialog": {
+    "trigger": "Eliminar {{count}} seleccionados",
+    "title": "Mover {{count}} entornos a la papelera",
+    "description": "Esto moverá los entornos seleccionados a la papelera del sistema. Puedes restaurarlos desde la papelera si es necesario.",
+    "totalSpaceFreed": "Espacio total liberado",
+    "cancel": "Cancelar",
+    "moving": "Moviendo...",
+    "confirm": "Mover a la papelera"
+  },
+  "stats": {
+    "totalEnvironments": "Total de entornos",
+    "totalEnvironmentsDetail": "{{python}} Python, {{node}} Node.js",
+    "totalSize": "Tamaño total",
+    "orphans": "Entornos huérfanos",
+    "orphansDetail": "No se encontró archivo de proyecto",
+    "largest": "Entorno más grande"
+  },
+  "settings": {
+    "loading": "Cargando ajustes...",
+    "title": "Ajustes",
+    "subtitle": "Configurar el comportamiento del escaneo",
+    "language": {
+      "title": "Idioma",
+      "description": "Selecciona el idioma de la interfaz."
+    },
+    "scanDepth": {
+      "title": "Profundidad máxima de escaneo",
+      "description": "Profundidad de recursión en directorios. 0 significa sin límite.",
+      "noLimit": "Sin límite",
+      "levels_one": "{{count}} nivel",
+      "levels_other": "{{count}} niveles"
+    },
+    "excludes": {
+      "title": "Directorios excluidos adicionales",
+      "description": "Nombres de directorio a omitir durante el escaneo (además de las exclusiones integradas como .git, Library).",
+      "placeholder": "ej. dist, .next",
+      "add": "Añadir",
+      "removeAriaLabel": "Eliminar {{name}}"
+    },
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "reset": "Restablecer"
+  },
+  "errors": {
+    "somethingWentWrong": "Algo salió mal",
+    "tryAgain": "Intentar de nuevo"
+  }
+}

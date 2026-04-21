@@ -9,6 +9,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
+import { useTranslation } from "react-i18next"
 import {
   Table,
   TableBody,
@@ -28,18 +29,13 @@ import type { EnvEntry } from "@/types/scan"
 type CategoryFilter = "all" | "python" | "node" | "orphan"
 type SizeFilter = "all" | "100mb" | "500mb" | "1gb"
 
-const CATEGORY_TABS: { value: CategoryFilter; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "python", label: "Python" },
-  { value: "node", label: "Node.js" },
-  { value: "orphan", label: "Orphan" },
-]
+const CATEGORY_TAB_VALUES: CategoryFilter[] = ["all", "python", "node", "orphan"]
 
-const SIZE_OPTIONS: { value: SizeFilter; label: string; bytes: number }[] = [
-  { value: "all", label: "Any size", bytes: 0 },
-  { value: "100mb", label: "> 100 MB", bytes: 100 * 1024 * 1024 },
-  { value: "500mb", label: "> 500 MB", bytes: 500 * 1024 * 1024 },
-  { value: "1gb", label: "> 1 GB", bytes: 1024 * 1024 * 1024 },
+const SIZE_OPTION_DEFS: { value: SizeFilter; bytes: number }[] = [
+  { value: "all", bytes: 0 },
+  { value: "100mb", bytes: 100 * 1024 * 1024 },
+  { value: "500mb", bytes: 500 * 1024 * 1024 },
+  { value: "1gb", bytes: 1024 * 1024 * 1024 },
 ]
 
 interface EnvTableProps {
@@ -49,12 +45,23 @@ interface EnvTableProps {
 }
 
 export function EnvTable({ data, scanRoot, onDeleted }: EnvTableProps) {
+  const { t } = useTranslation()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState("")
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all")
   const [sizeFilter, setSizeFilter] = useState<SizeFilter>("all")
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+
+  const categoryTabs = CATEGORY_TAB_VALUES.map((value) => ({
+    value,
+    label: t(`table.categories.${value}`),
+  }))
+
+  const sizeOptions = SIZE_OPTION_DEFS.map((def) => ({
+    ...def,
+    label: t(`table.sizeFilters.${def.value}`),
+  }))
 
   const handleSingleDeleted = useCallback(
     (path: string) => {
@@ -73,7 +80,7 @@ export function EnvTable({ data, scanRoot, onDeleted }: EnvTableProps) {
 
   const { isDeleting: isBatchDeleting, deleteEnvs } = useBatchDeleteEnv(handleBatchDeleted)
 
-  const sizeThreshold = SIZE_OPTIONS.find((o) => o.value === sizeFilter)?.bytes ?? 0
+  const sizeThreshold = SIZE_OPTION_DEFS.find((o) => o.value === sizeFilter)?.bytes ?? 0
 
   const filteredData = useMemo(() => {
     let result = data
@@ -123,7 +130,7 @@ export function EnvTable({ data, scanRoot, onDeleted }: EnvTableProps) {
       {/* Filter toolbar */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-1 rounded-lg border p-1">
-          {CATEGORY_TABS.map((tab) => (
+          {categoryTabs.map((tab) => (
             <Button
               key={tab.value}
               variant={categoryFilter === tab.value ? "default" : "ghost"}
@@ -143,14 +150,14 @@ export function EnvTable({ data, scanRoot, onDeleted }: EnvTableProps) {
         </div>
 
         <Input
-          placeholder="Search environments..."
+          placeholder={t("table.search")}
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
           className="max-w-sm"
         />
 
         <div className="flex items-center gap-1 rounded-lg border p-1">
-          {SIZE_OPTIONS.map((opt) => (
+          {sizeOptions.map((opt) => (
             <Button
               key={opt.value}
               variant={sizeFilter === opt.value ? "default" : "ghost"}
@@ -170,7 +177,7 @@ export function EnvTable({ data, scanRoot, onDeleted }: EnvTableProps) {
       {/* Batch action bar — visible only when rows are selected */}
       {selectedCount > 0 && (
         <div className="flex items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-2">
-          <span className="text-sm font-medium">{selectedCount} selected</span>
+          <span className="text-sm font-medium">{t("table.selected", { count: selectedCount })}</span>
           <BatchDeleteDialog
             entries={selectedEntries}
             onConfirm={() => void deleteEnvs(selectedEntries.map((e) => e.path))}
@@ -182,7 +189,7 @@ export function EnvTable({ data, scanRoot, onDeleted }: EnvTableProps) {
             className="ml-auto h-7 text-xs"
             onClick={() => setRowSelection({})}
           >
-            Clear selection
+            {t("table.clearSelection")}
           </Button>
         </div>
       )}
@@ -219,7 +226,7 @@ export function EnvTable({ data, scanRoot, onDeleted }: EnvTableProps) {
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                  No environments found.
+                  {t("table.noResults")}
                 </TableCell>
               </TableRow>
             )}
@@ -227,7 +234,7 @@ export function EnvTable({ data, scanRoot, onDeleted }: EnvTableProps) {
         </Table>
       </div>
       <p className="text-xs text-muted-foreground">
-        {table.getFilteredRowModel().rows.length} environment(s) found
+        {t("table.footer", { count: table.getFilteredRowModel().rows.length })}
       </p>
     </div>
   )

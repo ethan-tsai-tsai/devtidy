@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import { HardDrive, FolderX, Package } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import { formatBytes, getEnvCategory } from "@/lib/format"
 import type { EnvEntry } from "@/types/scan"
 
@@ -30,6 +31,7 @@ function StatCard({ icon, label, value, detail }: StatCardProps) {
 }
 
 export function StatCards({ data }: StatCardsProps) {
+  const { t } = useTranslation()
   const stats = useMemo(() => {
     const totalSize = data.reduce((sum, e) => sum + e.sizeBytes, 0)
     const orphanCount = data.filter((e) => !e.hasProjectFile).length
@@ -43,24 +45,24 @@ export function StatCards({ data }: StatCardsProps) {
     <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
       <StatCard
         icon={<Package className="size-5 text-muted-foreground" />}
-        label="Total Environments"
+        label={t("stats.totalEnvironments")}
         value={String(data.length)}
-        detail={`${stats.pythonCount} Python, ${stats.nodeCount} Node.js`}
+        detail={t("stats.totalEnvironmentsDetail", { python: stats.pythonCount, node: stats.nodeCount })}
       />
       <StatCard
         icon={<HardDrive className="size-5 text-muted-foreground" />}
-        label="Total Size"
+        label={t("stats.totalSize")}
         value={formatBytes(stats.totalSize)}
       />
       <StatCard
         icon={<FolderX className="size-5 text-destructive" />}
-        label="Orphans"
+        label={t("stats.orphans")}
         value={String(stats.orphanCount)}
-        detail="No project file found"
+        detail={t("stats.orphansDetail")}
       />
       <StatCard
         icon={<HardDrive className="size-5 text-muted-foreground" />}
-        label="Largest"
+        label={t("stats.largest")}
         value={data.length > 0
           ? formatBytes(Math.max(...data.map((e) => e.sizeBytes)))
           : "—"}
