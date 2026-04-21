@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "0.1.0"
+version = "0.2.0"
 description = "DevTidy — Virtual environment manager for Python venv and Node.js node_modules"
 authors = ["ethan-tsai-tsai"]
 license = "MIT"
