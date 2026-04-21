@@ -1,0 +1,113 @@
+{
+  "nav": {
+    "scan": "Scan",
+    "settings": "Settings"
+  },
+  "update": {
+    "available": "Update available — v{{version}}",
+    "restartHint": "Restart to install",
+    "installRestart": "Install & Restart",
+    "downloading": "Downloading update — {{percent}}%",
+    "downloadingNoPercent": "Downloading update…",
+    "checkFailed": "Update check failed"
+  },
+  "diskAccess": {
+    "title": "Full Disk Access required",
+    "description": "Some directories may be skipped. Grant access in System Settings → Privacy & Security → Full Disk Access.",
+    "openSettings": "Open Settings"
+  },
+  "scan": {
+    "title": "Environments",
+    "summary": "{{count}} found · {{size}} total",
+    "summaryWithDuration": "{{count}} found · {{size}} total · {{duration}}s",
+    "summaryWithRoot": "{{count}} found · {{size}} total · {{duration}}s · {{root}}",
+    "scanFolder": "Scan Folder",
+    "scanHome": "Scan Home",
+    "cancel": "Cancel",
+    "scanning": "Scanning for environments...",
+    "emptyTitle": "No scan results yet",
+    "emptyDescription": "Click Scan to find virtual environments on this machine."
+  },
+  "table": {
+    "categories": {
+      "all": "All",
+      "python": "Python",
+      "node": "Node.js",
+      "orphan": "Orphan"
+    },
+    "sizeFilters": {
+      "all": "Any size",
+      "100mb": "> 100 MB",
+      "500mb": "> 500 MB",
+      "1gb": "> 1 GB"
+    },
+    "search": "Search environments...",
+    "selected": "{{count}} selected",
+    "clearSelection": "Clear selection",
+    "noResults": "No environments found.",
+    "footer": "{{count}} environment(s) found",
+    "columns": {
+      "type": "Type",
+      "project": "Project",
+      "path": "Path",
+      "size": "Size",
+      "lastModified": "Last Modified",
+      "ascending": "(ascending)",
+      "descending": "(descending)"
+    },
+    "orphan": "Orphan"
+  },
+  "deleteDialog": {
+    "title": "Move to Trash",
+    "description": "This will move the following environment to the system trash. You can restore it from your trash if needed.",
+    "labelType": "Type",
+    "labelSize": "Size",
+    "labelPath": "Path",
+    "cancel": "Cancel",
+    "moving": "Moving...",
+    "confirm": "Move to Trash"
+  },
+  "batchDeleteDialog": {
+    "trigger": "Delete {{count}} selected",
+    "title": "Move {{count}} environments to Trash",
+    "description": "This will move the selected environments to the system trash. You can restore them from your trash if needed.",
+    "totalSpaceFreed": "Total space freed",
+    "cancel": "Cancel",
+    "moving": "Moving...",
+    "confirm": "Move to Trash"
+  },
+  "stats": {
+    "totalEnvironments": "Total Environments",
+    "totalEnvironmentsDetail": "{{python}} Python, {{node}} Node.js",
+    "totalSize": "Total Size",
+    "orphans": "Orphans",
+    "orphansDetail": "No project file found",
+    "largest": "Largest"
+  },
+  "settings": {
+    "loading": "Loading settings...",
+    "title": "Settings",
+    "subtitle": "Configure scan behavior",
+    "scanDepth": {
+      "title": "Max Scan Depth",
+      "description": "How deep to recurse into directories. 0 means unlimited.",
+      "noLimit": "No limit",
+      "levels_one": "{{count}} level",
+      "levels_other": "{{count}} levels"
+    },
+    "excludes": {
+      "title": "Extra Excluded Directories",
+      "description": "Directory names to skip during scanning (in addition to built-in exclusions like .git, Library).",
+      "placeholder": "e.g. dist, .next",
+      "add": "Add",
+      "removeAriaLabel": "Remove {{name}}"
+    },
+    "save": "Save",
+    "saving": "Saving...",
+    "reset": "Reset"
+  },
+  "errors": {
+    "somethingWentWrong": "Something went wrong",
+    "tryAgain": "Try again"
+  }
+}

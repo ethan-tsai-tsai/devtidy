@@ -1,5 +1,6 @@
 import { type ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, FolderOpen, FolderX } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -27,6 +28,7 @@ function SortableHeader({
   column: { getToggleSortingHandler: () => ((event: unknown) => void) | undefined; getIsSorted: () => false | "asc" | "desc" }
   children: React.ReactNode
 }) {
+  const { t } = useTranslation()
   const sorted = column.getIsSorted()
   return (
     <Button
@@ -37,8 +39,8 @@ function SortableHeader({
     >
       {children}
       <ArrowUpDown className="size-3.5 opacity-50" />
-      {sorted === "asc" && <span className="sr-only">(ascending)</span>}
-      {sorted === "desc" && <span className="sr-only">(descending)</span>}
+      {sorted === "asc" && <span className="sr-only">{t("table.columns.ascending")}</span>}
+      {sorted === "desc" && <span className="sr-only">{t("table.columns.descending")}</span>}
     </Button>
   )
 }
@@ -66,7 +68,10 @@ export const columns: ColumnDef<EnvEntry>[] = [
   },
   {
     accessorKey: "envType",
-    header: ({ column }) => <SortableHeader column={column}>Type</SortableHeader>,
+    header: ({ column }) => {
+      const { t } = useTranslation()
+      return <SortableHeader column={column}>{t("table.columns.type")}</SortableHeader>
+    },
     cell: ({ row }) => {
       const envType = row.original.envType
       const category = getEnvCategory(envType)
@@ -80,8 +85,12 @@ export const columns: ColumnDef<EnvEntry>[] = [
   },
   {
     accessorKey: "hasProjectFile",
-    header: ({ column }) => <SortableHeader column={column}>Project</SortableHeader>,
+    header: ({ column }) => {
+      const { t } = useTranslation()
+      return <SortableHeader column={column}>{t("table.columns.project")}</SortableHeader>
+    },
     cell: ({ row }) => {
+      const { t } = useTranslation()
       const { hasProjectFile, projectPath } = row.original
       const display = projectPath ? (projectPath.split("/").pop() ?? projectPath) : null
       return hasProjectFile ? (
@@ -92,14 +101,17 @@ export const columns: ColumnDef<EnvEntry>[] = [
       ) : (
         <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <FolderX className="size-3.5 text-destructive" />
-          Orphan
+          {t("table.orphan")}
         </span>
       )
     },
   },
   {
     accessorKey: "path",
-    header: ({ column }) => <SortableHeader column={column}>Path</SortableHeader>,
+    header: ({ column }) => {
+      const { t } = useTranslation()
+      return <SortableHeader column={column}>{t("table.columns.path")}</SortableHeader>
+    },
     cell: ({ row, table }) => {
       const meta = table.options.meta as TableMeta
       const display = toRelativePath(row.original.path, meta.scanRoot)
@@ -112,14 +124,20 @@ export const columns: ColumnDef<EnvEntry>[] = [
   },
   {
     accessorKey: "sizeBytes",
-    header: ({ column }) => <SortableHeader column={column}>Size</SortableHeader>,
+    header: ({ column }) => {
+      const { t } = useTranslation()
+      return <SortableHeader column={column}>{t("table.columns.size")}</SortableHeader>
+    },
     cell: ({ row }) => (
       <span className="tabular-nums">{formatBytes(row.original.sizeBytes)}</span>
     ),
   },
   {
     accessorKey: "lastModified",
-    header: ({ column }) => <SortableHeader column={column}>Last Modified</SortableHeader>,
+    header: ({ column }) => {
+      const { t } = useTranslation()
+      return <SortableHeader column={column}>{t("table.columns.lastModified")}</SortableHeader>
+    },
     cell: ({ row }) => (
       <span className="text-muted-foreground" title={row.original.lastModified}>
         {formatRelativeTime(row.original.lastModified)}

@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from "react"
 import { Plus, X, Save, RotateCcw } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useSettings } from "@/hooks/use-settings"
 import type { AppSettings } from "@/types/scan"
 
 function ExcludeChip({ name, onRemove }: { name: string; onRemove: () => void }) {
+  const { t } = useTranslation()
   return (
     <span className="inline-flex items-center gap-1 rounded-md border bg-muted px-2 py-0.5 text-xs font-mono">
       {name}
@@ -13,7 +15,7 @@ function ExcludeChip({ name, onRemove }: { name: string; onRemove: () => void })
         type="button"
         onClick={onRemove}
         className="ml-0.5 rounded-sm opacity-60 hover:opacity-100"
-        aria-label={`Remove ${name}`}
+        aria-label={t("settings.excludes.removeAriaLabel", { name })}
       >
         <X className="size-3" />
       </button>
@@ -65,24 +67,24 @@ export function SettingsPage() {
     }
   }
 
+  const { t } = useTranslation()
+
   if (isLoading) {
-    return <div className="text-sm text-muted-foreground">Loading settings...</div>
+    return <div className="text-sm text-muted-foreground">{t("settings.loading")}</div>
   }
 
   return (
     <div className="mx-auto max-w-lg space-y-8">
       <div>
-        <h2 className="text-lg font-semibold">Settings</h2>
-        <p className="text-sm text-muted-foreground">Configure scan behavior</p>
+        <h2 className="text-lg font-semibold">{t("settings.title")}</h2>
+        <p className="text-sm text-muted-foreground">{t("settings.subtitle")}</p>
       </div>
 
       {/* Scan depth */}
       <section className="space-y-3">
         <div>
-          <h3 className="text-sm font-medium">Max Scan Depth</h3>
-          <p className="text-xs text-muted-foreground">
-            How deep to recurse into directories. 0 means unlimited.
-          </p>
+          <h3 className="text-sm font-medium">{t("settings.scanDepth.title")}</h3>
+          <p className="text-xs text-muted-foreground">{t("settings.scanDepth.description")}</p>
         </div>
         <div className="flex items-center gap-3">
           <Input
@@ -94,7 +96,9 @@ export function SettingsPage() {
             className="w-24 tabular-nums"
           />
           <span className="text-xs text-muted-foreground">
-            {draft.scanDepth === 0 ? "No limit" : `${draft.scanDepth} level${draft.scanDepth > 1 ? "s" : ""}`}
+            {draft.scanDepth === 0
+              ? t("settings.scanDepth.noLimit")
+              : t("settings.scanDepth.levels_other", { count: draft.scanDepth })}
           </span>
         </div>
       </section>
@@ -102,15 +106,12 @@ export function SettingsPage() {
       {/* Extra excludes */}
       <section className="space-y-3">
         <div>
-          <h3 className="text-sm font-medium">Extra Excluded Directories</h3>
-          <p className="text-xs text-muted-foreground">
-            Directory names to skip during scanning (in addition to built-in exclusions like{" "}
-            <code className="font-mono">.git</code>, <code className="font-mono">Library</code>).
-          </p>
+          <h3 className="text-sm font-medium">{t("settings.excludes.title")}</h3>
+          <p className="text-xs text-muted-foreground">{t("settings.excludes.description")}</p>
         </div>
         <div className="flex gap-2">
           <Input
-            placeholder="e.g. dist, .next"
+            placeholder={t("settings.excludes.placeholder")}
             value={newExclude}
             onChange={(e) => setNewExclude(e.target.value)}
             onKeyDown={handleExcludeKeyDown}
@@ -124,7 +125,7 @@ export function SettingsPage() {
             disabled={!newExclude.trim() || draft.extraExcludes.includes(newExclude.trim())}
           >
             <Plus className="size-4" />
-            Add
+            {t("settings.excludes.add")}
           </Button>
         </div>
         {draft.extraExcludes.length > 0 && (
@@ -142,17 +143,17 @@ export function SettingsPage() {
       <div className="flex items-center gap-2">
         <Button onClick={handleSave} disabled={isSaving || !isDirty}>
           {isSaving ? (
-            <>Saving...</>
+            t("settings.saving")
           ) : (
             <>
               <Save className="size-4" />
-              Save
+              {t("settings.save")}
             </>
           )}
         </Button>
         <Button variant="outline" onClick={handleReset} disabled={isSaving || !isDirty}>
           <RotateCcw className="size-4" />
-          Reset
+          {t("settings.reset")}
         </Button>
       </div>
     </div>

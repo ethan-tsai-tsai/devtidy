@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react"
 import { Loader2, Trash2 } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -22,6 +23,7 @@ interface DeleteDialogProps {
 
 export function DeleteDialog({ entry, onDeleted }: DeleteDialogProps) {
   const [open, setOpen] = useState(false)
+  const { t } = useTranslation()
 
   const handleDeleted = useCallback((path: string) => {
     setOpen(false)
@@ -45,23 +47,21 @@ export function DeleteDialog({ entry, onDeleted }: DeleteDialogProps) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Move to Trash</DialogTitle>
-          <DialogDescription>
-            This will move the following environment to the system trash. You can restore it from your trash if needed.
-          </DialogDescription>
+          <DialogTitle>{t("deleteDialog.title")}</DialogTitle>
+          <DialogDescription>{t("deleteDialog.description")}</DialogDescription>
         </DialogHeader>
         <div className="rounded-md border bg-muted/50 p-3 text-xs">
           <dl className="space-y-1.5">
             <div className="flex justify-between">
-              <dt className="text-muted-foreground">Type</dt>
+              <dt className="text-muted-foreground">{t("deleteDialog.labelType")}</dt>
               <dd className="font-medium">{formatEnvType(entry.envType)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-muted-foreground">Size</dt>
+              <dt className="text-muted-foreground">{t("deleteDialog.labelSize")}</dt>
               <dd className="font-medium tabular-nums">{formatBytes(entry.sizeBytes)}</dd>
             </div>
             <div className="flex flex-col gap-0.5">
-              <dt className="text-muted-foreground">Path</dt>
+              <dt className="text-muted-foreground">{t("deleteDialog.labelPath")}</dt>
               <dd className="break-all font-mono">{entry.path}</dd>
             </div>
           </dl>
@@ -71,7 +71,7 @@ export function DeleteDialog({ entry, onDeleted }: DeleteDialogProps) {
         )}
         <DialogFooter>
           <DialogClose render={<Button variant="outline" disabled={isDeleting} />}>
-            Cancel
+            {t("deleteDialog.cancel")}
           </DialogClose>
           <Button variant="destructive" onClick={handleConfirm} disabled={isDeleting}>
             {isDeleting ? (
@@ -79,7 +79,7 @@ export function DeleteDialog({ entry, onDeleted }: DeleteDialogProps) {
             ) : (
               <Trash2 className="size-4" />
             )}
-            {isDeleting ? "Moving..." : "Move to Trash"}
+            {isDeleting ? t("deleteDialog.moving") : t("deleteDialog.confirm")}
           </Button>
         </DialogFooter>
       </DialogContent>
