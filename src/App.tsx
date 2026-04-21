@@ -1,10 +1,16 @@
 import { Component, useEffect, useMemo, useState, type ReactNode } from "react"
 import { homeDir } from "@tauri-apps/api/path"
-import { open } from "@tauri-apps/plugin-dialog"
+import { open, save } from "@tauri-apps/plugin-dialog"
 import { invoke } from "@tauri-apps/api/core"
-import { FolderSearch, Loader2, XCircle, AlertTriangle, Home, ShieldAlert, X, Download, RefreshCw } from "lucide-react"
-import { Toaster } from "sonner"
+import { FolderSearch, Loader2, XCircle, AlertTriangle, Home, ShieldAlert, X, Download, RefreshCw, FileDown, ChevronDown, AlertCircle } from "lucide-react"
+import { toast, Toaster } from "sonner"
 import { useTranslation } from "react-i18next"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { ThemeProvider, useTheme } from "@/hooks/use-theme"
 import { useUpdater } from "@/hooks/use-updater"
 import { useScan } from "@/hooks/use-scan"
@@ -155,8 +161,42 @@ function DiskAccessBanner() {
 }
 
 function ScanPage() {
-  const { status, results, durationMs, error, currentPath, scanRoot, startScan, cancelScan, removeResult } = useScan()
+  const { status, results, durationMs, skippedCount, error, errorKind, currentPath, scanRoot, startScan, cancelScan, removeResult } = useScan()
   const { t } = useTranslation()
+
+  async function handleExport(format: "csv" | "json") {
+    const defaultName = `devtidy-report.${format}`
+    const filters = format === "csv"
+      ? [{ name: "CSV", extensions: ["csv"] }]
+      : [{ name: "JSON", extensions: ["json"] }]
+
+    const filePath = await save({ defaultPath: defaultName, filters }).catch(() => null)
+    if (!filePath) return
+
+    let content: string
+    if (format === "json") {
+      content = JSON.stringify(results, null, 2)
+    } else {
+      const header = "Type,Category,Path,Size (bytes),Last Modified,Has Project,Project Path"
+      const rows = results.map((r) => [
+        r.envType,
+        r.envType === "NodeModules" ? "Node.js" : "Python",
+        `"${r.path}"`,
+        r.sizeBytes,
+        r.lastModified,
+        r.hasProjectFile,
+        r.projectPath ? `"${r.projectPath}"` : "",
+      ].join(","))
+      content = [header, ...rows].join("\n")
+    }
+
+    try {
+      await invoke("write_export_file", { path: filePath, content })
+      toast.success(t("export.success", { format: format.toUpperCase() }))
+    } catch (err) {
+      toast.error(t("export.error", { error: String(err) }))
+    }
+  }
 
   const totalSize = useMemo(
     () => results.reduce((sum, r) => sum + r.sizeBytes, 0),
@@ -210,6 +250,27 @@ function ScanPage() {
             </Button>
           ) : (
             <>
+              {(status === "completed" || status === "cancelled") && results.length > 0 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger render={
+                    <Button variant="outline" size="sm">
+                      <FileDown className="size-4" />
+                      {t("export.button")}
+                      <ChevronDown className="size-3 opacity-60" />
+                    </Button>
+                  } />
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => { void handleExport("csv") }}>
+                      <Download className="size-4" />
+                      {t("export.csv")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => { void handleExport("json") }}>
+                      <Download className="size-4" />
+                      {t("export.json")}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
               <Button onClick={() => { void handleScanFolder() }}>
                 <FolderSearch className="size-4" />
                 {t("scan.scanFolder")}
@@ -238,8 +299,27 @@ function ScanPage() {
       )}
 
       {status === "error" && (
-        <div className="rounded-lg border border-destructive/50 bg-destructive/5 p-4">
-          <p className="text-sm text-destructive">{error}</p>
+        <div className="flex items-start gap-3 rounded-lg border border-destructive/50 bg-destructive/5 p-4">
+          <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
+          <div>
+            <p className="text-sm font-medium text-destructive">
+              {errorKind === "permission"
+                ? t("errors.scanPermission")
+                : errorKind === "not_found"
+                  ? t("errors.scanNotFound")
+                  : t("errors.scanFailed")}
+            </p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{error}</p>
+          </div>
+        </div>
+      )}
+
+      {(status === "completed" || status === "cancelled") && skippedCount > 0 && (
+        <div className="flex items-start gap-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm">
+          <AlertCircle className="mt-0.5 size-4 shrink-0 text-yellow-500" />
+          <p className="text-yellow-700 dark:text-yellow-400">
+            {t("errors.skippedDirs", { count: skippedCount })}
+          </p>
         </div>
       )}
 

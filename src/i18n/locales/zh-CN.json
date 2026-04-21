@@ -116,6 +116,17 @@
   },
   "errors": {
     "somethingWentWrong": "出现错误",
-    "tryAgain": "重试"
+    "tryAgain": "重试",
+    "scanFailed": "扫描失败",
+    "scanPermission": "权限不足 — 部分目录无法访问",
+    "scanNotFound": "路径不存在或已被移除",
+    "skippedDirs": "因权限限制，已跳过 {{count}} 个目录，结果可能不完整。"
+  },
+  "export": {
+    "button": "导出",
+    "csv": "导出为 CSV",
+    "json": "导出为 JSON",
+    "success": "报告已导出为 {{format}}",
+    "error": "导出失败：{{error}}"
   }
 }

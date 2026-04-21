@@ -116,6 +116,17 @@
   },
   "errors": {
     "somethingWentWrong": "發生錯誤",
-    "tryAgain": "再試一次"
+    "tryAgain": "再試一次",
+    "scanFailed": "掃描失敗",
+    "scanPermission": "權限不足 — 部分目錄無法存取",
+    "scanNotFound": "路徑不存在或已被移除",
+    "skippedDirs": "因權限限制，已略過 {{count}} 個目錄，結果可能不完整。"
+  },
+  "export": {
+    "button": "匯出",
+    "csv": "匯出為 CSV",
+    "json": "匯出為 JSON",
+    "success": "報告已匯出為 {{format}}",
+    "error": "匯出失敗：{{error}}"
   }
 }

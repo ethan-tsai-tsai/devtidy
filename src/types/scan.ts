@@ -36,7 +36,7 @@ export interface AppSettings {
 /** Discriminated union of scan events streamed from backend via Channel. */
 export type ScanEvent =
   | { event: "started"; data: { root: string } }
-  | { event: "completed"; data: { results: EnvEntry[]; durationMs: number } }
+  | { event: "completed"; data: { results: EnvEntry[]; durationMs: number; skippedCount: number } }
   | { event: "progress"; data: { currentPath: string } }
   | { event: "cancelled" }
-  | { event: "error"; data: { message: string } }
+  | { event: "error"; data: { message: string; kind: "permission" | "not_found" | "unknown" } }

@@ -116,6 +116,17 @@
   },
   "errors": {
     "somethingWentWrong": "エラーが発生しました",
-    "tryAgain": "もう一度試す"
+    "tryAgain": "もう一度試す",
+    "scanFailed": "スキャンに失敗しました",
+    "scanPermission": "アクセス権限がありません — 一部のディレクトリにアクセスできませんでした",
+    "scanNotFound": "パスが存在しないか、削除されています",
+    "skippedDirs": "権限の制限により {{count}} 個のディレクトリをスキップしました。結果が不完全な場合があります。"
+  },
+  "export": {
+    "button": "エクスポート",
+    "csv": "CSVとしてエクスポート",
+    "json": "JSONとしてエクスポート",
+    "success": "レポートを {{format}} でエクスポートしました",
+    "error": "エクスポートに失敗しました：{{error}}"
   }
 }
