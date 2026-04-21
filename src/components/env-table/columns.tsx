@@ -1,6 +1,8 @@
 import { type ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, FolderOpen, FolderX } from "lucide-react"
+import { invoke } from "@tauri-apps/api/core"
+import { ArrowUpDown, FolderOpen, FolderX, Terminal } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -148,8 +150,31 @@ export const columns: ColumnDef<EnvEntry>[] = [
     id: "actions",
     header: () => <span className="sr-only">Actions</span>,
     cell: ({ row, table }) => {
+      const { t } = useTranslation()
       const meta = table.options.meta as TableMeta
-      return <DeleteDialog entry={row.original} onDeleted={meta.onDeleted} />
+
+      async function handleOpenInTerminal() {
+        try {
+          await invoke("open_in_terminal", { path: row.original.path })
+        } catch (err) {
+          toast.error(t("table.actions.terminalError", { error: String(err) }))
+        }
+      }
+
+      return (
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-7"
+            title={t("table.actions.openInTerminal")}
+            onClick={handleOpenInTerminal}
+          >
+            <Terminal className="size-3.5" />
+          </Button>
+          <DeleteDialog entry={row.original} onDeleted={meta.onDeleted} />
+        </div>
+      )
     },
     enableSorting: false,
   },

@@ -55,7 +55,11 @@
       "ascending": "（升冪）",
       "descending": "（降冪）"
     },
-    "orphan": "孤兒"
+    "orphan": "孤兒",
+    "actions": {
+      "openInTerminal": "在終端機中開啟",
+      "terminalError": "無法開啟終端機：{{error}}"
+    }
   },
   "deleteDialog": {
     "title": "移至垃圾桶",

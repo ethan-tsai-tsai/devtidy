@@ -55,7 +55,11 @@
       "ascending": "（昇順）",
       "descending": "（降順）"
     },
-    "orphan": "孤立"
+    "orphan": "孤立",
+    "actions": {
+      "openInTerminal": "ターミナルで開く",
+      "terminalError": "ターミナルを開けませんでした：{{error}}"
+    }
   },
   "deleteDialog": {
     "title": "ゴミ箱に移動",

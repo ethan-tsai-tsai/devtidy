@@ -55,7 +55,11 @@
       "ascending": "(ascending)",
       "descending": "(descending)"
     },
-    "orphan": "Orphan"
+    "orphan": "Orphan",
+    "actions": {
+      "openInTerminal": "Open in Terminal",
+      "terminalError": "Failed to open terminal: {{error}}"
+    }
   },
   "deleteDialog": {
     "title": "Move to Trash",
