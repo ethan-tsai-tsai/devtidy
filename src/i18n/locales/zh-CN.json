@@ -1,0 +1,117 @@
+{
+  "nav": {
+    "scan": "扫描",
+    "settings": "设置"
+  },
+  "update": {
+    "available": "有新版本 — v{{version}}",
+    "restartHint": "重启以安装",
+    "installRestart": "安装并重启",
+    "downloading": "正在下载更新 — {{percent}}%",
+    "downloadingNoPercent": "正在下载更新…",
+    "checkFailed": "更新检查失败"
+  },
+  "diskAccess": {
+    "title": "需要完整磁盘访问权限",
+    "description": "部分目录可能会被跳过。请前往「系统设置 → 隐私与安全 → 完整磁盘访问」授予权限。",
+    "openSettings": "打开设置"
+  },
+  "scan": {
+    "title": "虚拟环境",
+    "summary": "找到 {{count}} 个 · 共 {{size}}",
+    "summaryWithDuration": "找到 {{count}} 个 · 共 {{size}} · {{duration}}s",
+    "summaryWithRoot": "找到 {{count}} 个 · 共 {{size}} · {{duration}}s · {{root}}",
+    "scanFolder": "扫描文件夹",
+    "scanHome": "扫描主目录",
+    "cancel": "取消",
+    "scanning": "正在扫描虚拟环境...",
+    "emptyTitle": "暂无扫描结果",
+    "emptyDescription": "点击扫描按钮来查找此机器上的虚拟环境。"
+  },
+  "table": {
+    "categories": {
+      "all": "全部",
+      "python": "Python",
+      "node": "Node.js",
+      "orphan": "孤立"
+    },
+    "sizeFilters": {
+      "all": "不限大小",
+      "100mb": "> 100 MB",
+      "500mb": "> 500 MB",
+      "1gb": "> 1 GB"
+    },
+    "search": "搜索环境...",
+    "selected": "已选择 {{count}} 个",
+    "clearSelection": "清除选择",
+    "noResults": "未找到符合的环境。",
+    "footer": "找到 {{count}} 个环境",
+    "columns": {
+      "type": "类型",
+      "project": "项目",
+      "path": "路径",
+      "size": "大小",
+      "lastModified": "最后修改",
+      "ascending": "（升序）",
+      "descending": "（降序）"
+    },
+    "orphan": "孤立"
+  },
+  "deleteDialog": {
+    "title": "移至回收站",
+    "description": "此操作将把以下环境移至系统回收站，您可根据需要从回收站还原。",
+    "labelType": "类型",
+    "labelSize": "大小",
+    "labelPath": "路径",
+    "cancel": "取消",
+    "moving": "移动中...",
+    "confirm": "移至回收站"
+  },
+  "batchDeleteDialog": {
+    "trigger": "删除已选择的 {{count}} 个",
+    "title": "将 {{count}} 个环境移至回收站",
+    "description": "此操作将把选择的环境移至系统回收站，您可根据需要从回收站还原。",
+    "totalSpaceFreed": "释放空间总计",
+    "cancel": "取消",
+    "moving": "移动中...",
+    "confirm": "移至回收站"
+  },
+  "stats": {
+    "totalEnvironments": "环境总数",
+    "totalEnvironmentsDetail": "{{python}} Python、{{node}} Node.js",
+    "totalSize": "总占用空间",
+    "orphans": "孤立环境",
+    "orphansDetail": "未找到项目配置文件",
+    "largest": "最大环境"
+  },
+  "settings": {
+    "loading": "加载设置中...",
+    "title": "设置",
+    "subtitle": "配置扫描行为",
+    "language": {
+      "title": "语言",
+      "description": "选择界面显示语言。"
+    },
+    "scanDepth": {
+      "title": "最大扫描深度",
+      "description": "递归进入目录的层数，0 表示不限深度。",
+      "noLimit": "不限深度",
+      "levels_one": "{{count}} 层",
+      "levels_other": "{{count}} 层"
+    },
+    "excludes": {
+      "title": "额外排除目录",
+      "description": "扫描时要跳过的目录名称（除了内置的 .git、Library 等）。",
+      "placeholder": "例如 dist、.next",
+      "add": "添加",
+      "removeAriaLabel": "移除 {{name}}"
+    },
+    "save": "保存",
+    "saving": "保存中...",
+    "reset": "重置"
+  },
+  "errors": {
+    "somethingWentWrong": "出现错误",
+    "tryAgain": "重试"
+  }
+}

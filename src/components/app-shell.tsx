@@ -1,8 +1,7 @@
-import { Globe, HardDrive, ScanSearch, Settings } from "lucide-react"
+import { HardDrive, ScanSearch, Settings } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
-import { LANGUAGES, setLanguage, type LanguageCode } from "@/i18n"
 
 type AppTab = "scan" | "settings"
 
@@ -10,24 +9,6 @@ interface AppShellProps {
   children: React.ReactNode
   tab: AppTab
   onTabChange: (tab: AppTab) => void
-}
-
-function LanguageToggle() {
-  const { i18n } = useTranslation()
-  const current = i18n.language as LanguageCode
-  const next = LANGUAGES.find((l) => l.code !== current) ?? LANGUAGES[0]
-
-  return (
-    <Button
-      variant="ghost"
-      size="icon-sm"
-      onClick={() => setLanguage(next.code)}
-      aria-label={`Switch to ${next.label}`}
-      title={next.label}
-    >
-      <Globe className="size-4" />
-    </Button>
-  )
 }
 
 export function AppShell({ children, tab, onTabChange }: AppShellProps) {
@@ -62,10 +43,7 @@ export function AppShell({ children, tab, onTabChange }: AppShellProps) {
             </Button>
           </nav>
         </div>
-        <div className="flex items-center gap-1">
-          <LanguageToggle />
-          <ThemeToggle />
-        </div>
+        <ThemeToggle />
       </header>
       <main className="flex-1 overflow-y-auto p-6">{children}</main>
     </div>

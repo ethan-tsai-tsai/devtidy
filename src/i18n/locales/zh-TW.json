@@ -88,6 +88,10 @@
     "loading": "載入設定中...",
     "title": "設定",
     "subtitle": "設定掃描行為",
+    "language": {
+      "title": "語言",
+      "description": "選擇介面顯示語言。"
+    },
     "scanDepth": {
       "title": "最大掃描深度",
       "description": "遞迴進入目錄的層數，0 表示不限深度。",

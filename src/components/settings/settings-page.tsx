@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useSettings } from "@/hooks/use-settings"
+import { LANGUAGES, setLanguage, type LanguageCode } from "@/i18n"
 import type { AppSettings } from "@/types/scan"
 
 function ExcludeChip({ name, onRemove }: { name: string; onRemove: () => void }) {
@@ -67,7 +68,7 @@ export function SettingsPage() {
     }
   }
 
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   if (isLoading) {
     return <div className="text-sm text-muted-foreground">{t("settings.loading")}</div>
@@ -79,6 +80,27 @@ export function SettingsPage() {
         <h2 className="text-lg font-semibold">{t("settings.title")}</h2>
         <p className="text-sm text-muted-foreground">{t("settings.subtitle")}</p>
       </div>
+
+      {/* Language */}
+      <section className="space-y-3">
+        <div>
+          <h3 className="text-sm font-medium">{t("settings.language.title")}</h3>
+          <p className="text-xs text-muted-foreground">{t("settings.language.description")}</p>
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {LANGUAGES.map((lang) => (
+            <Button
+              key={lang.code}
+              variant={i18n.language === lang.code ? "default" : "outline"}
+              size="sm"
+              className="h-7 px-3 text-xs"
+              onClick={() => setLanguage(lang.code as LanguageCode)}
+            >
+              {lang.label}
+            </Button>
+          ))}
+        </div>
+      </section>
 
       {/* Scan depth */}
       <section className="space-y-3">

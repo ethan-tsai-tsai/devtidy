@@ -88,6 +88,10 @@
     "loading": "Loading settings...",
     "title": "Settings",
     "subtitle": "Configure scan behavior",
+    "language": {
+      "title": "Language",
+      "description": "Select the interface display language."
+    },
     "scanDepth": {
       "title": "Max Scan Depth",
       "description": "How deep to recurse into directories. 0 means unlimited.",
